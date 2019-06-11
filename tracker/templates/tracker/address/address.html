@@ -1,0 +1,128 @@
+{% extends 'tracker/base.html' %}
+{% block cssBlock %}
+<link rel="stylesheet" type="text/css" href="/static/css/detail.css">
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div class="detail-info">
+            <div class="subTitle">Address</div>
+            <table class="table detail-table">
+                <tbody>
+                    <tr>
+                        <td>Address</td>
+                        <td>{{addressInfo.address}}</td>
+                    </tr>
+                    <tr>
+                        <td>Balance</td>
+                        <td>{{addressInfo.balance}} <span class="small text-secondary">({{addressInfo.icxUsd}} USD)</span></td>
+                    </tr>
+                    <tr>
+                        <td>No of Txns</td>
+                        <td>{{addressInfo.txCount}}</td>
+                    </tr>
+                    <tr>
+                        <td>Token Balance</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-light dropdown-toggle btn-sm" type="button" id="addressTokens" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {{totalUSD}} USD <span class="small text-secondary">(Total)</span>
+                                </button>
+                                <div class="dropdown-menu scrollbar" aria-labelledby="addressTokens" style="max-height: 340px;">
+                                    <ul class="list-group">
+                                    {% for record in addressInfo.tokenList %}
+                                    
+                                        <li>
+                                            <p>
+                                                <em>{{record.contractName}}</em>
+                                                <em>
+                                                    {% if record.totalTokenPrice == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{record.totalTokenPrice}}
+                                                    {% endif %}
+                                                </em>
+                                                <em>USD</em>
+                                            </p>
+                                            <p>
+                                                <em>{{record.quantity}} {{record.contractSymbol}}</em>
+                                                <em>
+                                                    {% if record.unit == None %}
+                                                    -
+                                                    {% else %}
+                                                    {{record.unit}}
+                                                    {% endif %}
+                                                </em>
+                                                <em>@</em>
+                                            </p>
+                                        </li>
+                                    
+                                    {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>            
+        </div>
+        <div class="detail-more">
+            <div class="subTitle">Transactions</div>            
+                {% if addressTxList|length < 1 %}
+                <table class="table">
+                <tbody>
+                        <tr><td colspan="7" class="notrans">No Transaction</td></tr>
+                {% else %}
+                <div class="info-msg">Latest {{addressInfo.txCount}} Txn(s) from a total of <a href="{% url 'tracker:addressTx' addressInfo.address %}">{{addressInfo.txCount}} transaction(s)</a>
+                <table class="table">
+                <thead>
+                    <th>Tx Hash</th>
+                    <th>Block</th>
+                    <th>Date</th>
+                    <th>From</th>
+                    <th></th>
+                    <th>To</th>
+                    <th>Amount</th>
+                    <th>TxFee</th>
+                </thead>
+                <tbody>
+                    {% for record in addressTxList %}
+                        <tr>
+                            <td class="text-truncate" style="max-width: 300px;">
+                                <a href="{% url 'tracker:txTracker' record.txHash %}">{{record.txHash|truncatechars:30}}</a>
+                            </td>
+                            <td>
+                                <a href="{% url 'tracker:blockTracker' record.height %}">{{record.height}}</a>
+                            </td>
+                            <td>{{record.createDate}}</td>
+                            <td class="text-truncate" style="max-width: 100px;">
+                                {% if addressInfo.address == record.fromAddr %}
+                                    {{record.fromAddr}}</td><td class="table-sign out"><span>OUT</span>
+                                {% elif 'cx' in record.fromAddr %}
+                                    <a href="{% url 'tracker:contractInfo' record.fromAddr %}">{{record.fromAddr}}</a></td><td class="table-sign IN"><span>IN</span>
+                                {% elif 'hx' in record.fromAddr %}
+                                    <a href="{% url 'tracker:addressInfo' record.fromAddr %}">{{record.fromAddr}}</a></td><td class="table-sign IN"><span>IN</span>
+                                {% else %}
+                                    {{record.fromAddr|truncatechars:13}}</td><td class="table-sign IN"><span>IN</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-truncate" style="max-width: 100px;">
+                                {% if addressInfo.address == record.toAddr %}
+                                    {{record.toAddr}}
+                                {% elif 'cx' in record.toAddr|slice:"0.3" %}
+                                    <a href="{% url 'tracker:contractInfo' record.toAddr %}">{{record.toAddr|truncatechars:13}}</a>
+                                {% elif 'hx' in record.toAddr|slice:"0.3" %}
+                                    <a href="{% url 'tracker:addressInfo' record.toAddr %}">{{record.toAddr|truncatechars:13}}</a>
+                                {% else %}
+                                    {{record.toAddr}}
+                                {% endif %}
+                            </td>
+                            <td>{{record.amount}}</td>
+                            <td>{{record.fee}}</td>
+                        </tr>
+                {% endfor%}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

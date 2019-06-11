@@ -1,0 +1,32 @@
+<div class="list-table-info">
+    <div class="table-count dropup float-left">
+        <button type="button" class="btn btn-secondary dropup-btn">
+            {{count}}
+        </button>
+        <div class="dropup-content">
+            <a href="#" onclick="tableCountChange(this)">10</a>
+            <a href="#" onclick="tableCountChange(this)">25</a>
+            <a href="#" onclick="tableCountChange(this)">50</a>
+            <a href="#" onclick="tableCountChange(this)">100</a>
+        </div>
+    </div>
+    <div class="table-page float-right">
+        {% if page > 1 %}
+        <button class="btn bg-seagreen"onclick="tablePageChange('1')"> << </button>
+        <button class="btn bg-seagreen"onclick="tablePageChange('{{page|add:-1}}')"> < </button>
+        {% else %}
+        <button class="btn bg-seagreen"disabled onclick="tablePageChange('1')"> << </button>
+        <button class="btn bg-seagreen"disabled onclick="tablePageChange('{{page|add:-1}}')"> < </button>
+        {% endif %}
+        <span> Page </span>
+        <input id="table-page" type="text" value="{{page}}" onkeyup="tablePageSubmit(this);">
+        <span> /  {{maxPage}} </span>
+        {% if page == maxPage %}
+        <button class="btn bg-seagreen"disabled onclick="tablePageChange('{{page|add:+1}}')"> > </button>
+        <button class="btn bg-seagreen"disabled onclick="tablePageChange('{{maxPage}}')"> >> </button>
+        {% else %}
+        <button class="btn bg-seagreen"onclick="tablePageChange('{{page|add:+1}}')"> > </button>
+        <button class="btn bg-seagreen"onclick="tablePageChange('{{maxPage}}')"> >> </button>
+        {% endif %}
+    </div>
+</div>

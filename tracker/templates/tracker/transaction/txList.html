@@ -1,0 +1,55 @@
+{% extends 'tracker/base.html' %}
+{% block jsBlock %}
+    <script src="/static/js/tablePageCount.js" type="text/javascript"></script>
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div class="info-list">
+            <div class="subTitle">Transactions</div>
+            <table class="table">
+                <thead>
+                    <th>TxHash</th>
+                    <th>Block</th>
+                    <th>Date</th>
+                    <th>From</th>
+                    <th></th>
+                    <th>To</th>
+                    <th>Amount</th>
+                    <th>TxFee</th>
+                </thead>
+                <tbody>
+                    {% for record in txList %}
+                        <tr>
+                            <td class="text-truncate" style="max-width: 300px;"><a href="{% url 'tracker:txTracker' record.txHash %}">{{record.txHash}}</a></td>
+                            <td><a href="{% url 'tracker:blockTracker' record.height %}">{{record.height}}</a></td>
+                            <td>{{record.createDate}}</td>
+                            <td class="text-truncate" style="max-width: 100px;">
+                                {% if 'cx' in record.fromAddr %}
+                                    <a href="{% url 'tracker:contractInfo' record.fromAddr %}">{{record.fromAddr}}</a>
+                                {% elif 'hx' in record.fromAddr %}
+                                    <a href="{% url 'tracker:addressInfo' record.fromAddr %}">{{record.fromAddr}}</a>
+                                {% else %}
+                                    {{record.fromAddr}}
+                                {% endif %}
+                            </td>
+                            <td><span class="glyphicon glyphicon-arrow-right"></span></td>                               
+                            </td>
+                            <td class="text-truncate" style="max-width: 100px;">                                 
+                                {% if 'cx' in record.toAddr %}
+                                    <a href="{% url 'tracker:contractInfo' record.toAddr %}">{{record.toAddr}}</a>
+                                {% elif 'hx' in record.toAddr %}
+                                    <a href="{% url 'tracker:addressInfo' record.toAddr %}">{{record.toAddr}}</a>
+                                {% else %}
+                                    {{record.toAddr}}
+                                {% endif %}
+                            </td>
+                            <td>{{record.amount}}</td>
+                            <td>{{record.fee}}</td>
+                        </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+            {% include "tracker/list-table-info.html" %}
+        </div>
+    </div>
+{% endblock %}

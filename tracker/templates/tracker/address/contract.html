@@ -1,0 +1,120 @@
+{% extends 'tracker/base.html' %}
+{% block cssBlock %}
+    <link rel="stylesheet" type="text/css" href="/static/css/detail.css">
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div class="detail-info">
+            <div class="subTitle">Contract</div>
+            <table class="table detail-table">
+                <tr>
+                    <td>Address</td>
+                    <td colspan="3">{{contractInfo.address}}</td>
+                </tr>
+                <tr>
+                    <td>Balance</td>
+                    <td>{{contractInfo.balance}} <em>ICX</em></td>
+                    <td>Token Contract</td>
+                    <td><a href="{% url 'tracker:tokenInfo' contractInfo.address %}">{{contractInfo.tokenName}}</a></td>
+                </tr>
+                <tr>
+                    <td>ICX Value</td>
+                    <td>{{contractInfo.usdBalance}} <em>USD</em></td>
+                    <td>Contract Creator</td>
+                    <td>
+                        {% if '0x' in contractInfo.creator|slice:3 %}
+                            <a href="{% url 'tracker:txTracker' contractInfo.creator %}">{{contractInfo.creator|truncatechars:20}}</a>
+                        {% elif 'cx' in contractInfo.creator|slice:3 %}
+                            <a href="{% url 'tracker:tokenInfo' contractInfo.creator %}">{{contractInfo.creator|truncatechars:20}}</a>
+                        {% elif 'hx' in contractInfo.creator|slice:3 %}
+                            <a href="{% url 'tracker:addressInfo' contractInfo.creator %}">{{contractInfo.creator|truncatechars:20}}</a>
+                        {% else %}
+                            {{contractInfo.creator|truncatechars:20}}
+                        {% endif %}
+                        <em> at Txn </em>
+                        {% if '0x' in contractInfo.createTx|slice:3 %}
+                            <a href="{% url 'tracker:txTracker' contractInfo.createTx %}">{{contractInfo.createTx|truncatechars:20}}</a>
+                        {% elif 'cx' in contractInfo.createTx|slice:3 %}
+                            <a href="{% url 'tracker:tokenInfo' contractInfo.createTx %}">{{contractInfo.createTx|truncatechars:20}}</a>
+                        {% elif 'hx' in contractInfo.createTx|slice:3 %}
+                            <a href="{% url 'tracker:addressInfo' contractInfo.createTx %}">{{contractInfo.createTx|truncatechars:20}}</a>
+                        {% else %}
+                            {{contractInfo.createTx|truncatechars:20}}
+                        {% endif %}
+                        </td>
+                </tr>
+                <tr>
+                    <td>Transactions</td>
+                    <td>{{contractInfo.txCount}} <em>Txns</em></td>
+                    <td>Status</td>
+                    <td>
+                        <em>
+                        {% if '1' == contractInfo.status %}
+                            Active
+                        {% elif '0' == contractInfo.status %}
+                            Pending
+                        {% else %}
+                            Rejected
+                        {% endif %}
+                        </em>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="detail-more">
+            <div class="subTitle">Transactions</div>
+                {% if contractTxList|length < 1 %}
+                <table class="table">
+                <tbody>
+                        <tr><td colspan="7" class="notrans">No Transaction</td></tr>
+                {% else %}
+                <div class="info-msg">Latest {{contractInfo.txCount}} Txn(s) from a total of <a href="{% url 'tracker:contractTx' contractInfo.address %}">{{contractInfo.txCount}} transaction(s)</a>
+                <table class="table">
+                <thead>
+                    <th>Tx Hash</th>
+                    <th>Block</th>
+                    <th>Date</th>
+                    <th>From</th>
+                    <th></th>
+                    <th>To</th>
+                    <th>Amount</th>
+                    <th>TxFee</th>
+                </thead>
+                <tbody>
+                    {% for record in contractTxList %}
+                        <tr>
+                            <td class="text-truncate" style="max-width: 300px;"><a href="{% url 'tracker:txTracker' record.txHash %}">{{record.txHash}}</a></td>
+                            <td><a href="{% url 'tracker:blockTracker' record.height %}">{{record.height}}</a></td>
+                            <td>{{record.createDate}}</td>
+                            <td class="text-truncate" style="max-width: 100px;">
+                                {% if contractInfo.address == record.fromAddr %}
+                                    {{record.fromAddr}}</td><td class="table-sign out"><span>OUT</span>
+                                {% elif 'cx' in record.fromAddr %}
+                                    <a href="{% url 'tracker:contractInfo' record.fromAddr %}">{{record.fromAddr}}</a></td><td class="table-sign IN"><span>IN</span>
+                                {% elif 'hx' in record.fromAddr %}
+                                    <a href="{% url 'tracker:addressInfo' record.fromAddr %}">{{record.fromAddr}}</a></td><td class="table-sign IN"><span>IN</span>
+                                {% else %}
+                                    {{record.fromAddr}}</td><td class="table-sign IN"><span>IN</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-truncate" style="max-width: 100px;">
+                                {% if contractInfo.address == record.toAddr %}
+                                    {{record.toAddr}}
+                                {% elif 'cx' in record.toAddr %}
+                                    <a href="{% url 'tracker:contractInfo' record.toAddr %}">{{record.toAddr}}</a>
+                                {% elif 'hx' in record.toAddr %}
+                                    <a href="{% url 'tracker:addressInfo' record.toAddr %}">{{record.toAddr}}</a>
+                                {% else %}
+                                    {{record.toAddr}}
+                                {% endif %}
+                            </td>
+                            <td>{{record.amount}}</td>
+                            <td>{{record.fee}}</td>
+                        </tr>
+                    {% endfor%}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

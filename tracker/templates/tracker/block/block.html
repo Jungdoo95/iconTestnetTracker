@@ -1,0 +1,56 @@
+{% extends 'tracker/base.html' %}
+    {% block cssBlock %}
+        <link rel="stylesheet" type="text/css" href="/static/css/detail.css">
+    {% endblock %}
+    {% block contentBlock %}
+    <div class="content-wrap">
+        <div class="detail-info">
+            <div>
+                <div class="subTitle">Block</div>
+                <table class="table detail-table">
+                    <tbody>
+                        {% for key, value in blockInfo.items %}
+                        <tr>
+                            <td>{{key}}</td>
+                            <td>
+                                {% if key == 'prevHash' %}
+                                    <a href="{% url 'tracker:blockTracker' blockInfo.height|add:-1 %}">{{value}}</a>
+                                {% else %}
+                                    {{value}}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="detail-more">
+            <div class="subTitle">Transactions</div>
+            <div class="info-msg">Latest {{blockInfo.txCount}} Txn(s) from a total of <a href="{% url 'tracker:blockTx' blockInfo.height %}">{{blockInfo.txCount}} transaction(s)</a>
+            <div>
+                <table class="table">
+                    <thead>
+                        <th>Tx Hash</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                        <th>TxFee</th>
+                    </thead>
+                    <tbody>
+                        {% for record in blockTx %}
+                        
+                            <tr>
+                                <td><a href="{% url 'tracker:txTracker' record.txHash %}">{{record.txHash}}</a></td>
+                                <td class="text-truncate" style="max-width: 100px;">{{record.fromAddr}}</td>
+                                <td class="text-truncate" style="max-width: 100px;">{{record.toAddr}}</td>
+                                <td>{{record.amount}}</td>
+                                <td>{{record.fee}}</td>
+                            </tr>
+                {% endfor%}
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

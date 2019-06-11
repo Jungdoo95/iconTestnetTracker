@@ -1,0 +1,76 @@
+{% extends 'tracker/base.html' %}
+    {% block cssBlock %}
+        <link rel="stylesheet" type="text/css" href="/static/css/detail.css">
+        <style>
+            .prettyprint{
+                padding:0px !important;
+                border: 0px !important;
+                margin-bottom: 0;
+                text-align: left;
+            }
+        </style>
+    {% endblock %}
+    {% block contentBlock %}
+    <div class="content-wrap">
+        <div class="detail-info">
+            <div>
+                <div class="subTitle">Transaction</div>
+                <table class="table detail-table">
+                    <tbody>
+                        {% for key, value in transaction.items%}
+                        <tr>
+                            <td>{{key}}</td>
+                            <td>
+                                {% if key == "dataString" %}
+                                    {% for word in value %}
+                                        {% if word == '{' or word == ',' %}
+                                            {{word}}<br>&emsp;
+                                        {% elif word == '}'%}
+                                            <br>{{word}}
+                                        {%else%}
+                                            {{word}}
+                                        {%endif%}
+                                    {% endfor %}
+                                {% else %}
+                                    {{value}}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="detail-more">
+                <div class="subTitle">Internal Transactions</div>
+                <div>
+                    <table class="table">
+                        {% if internalTx|length < 1 %}
+                        <tbody>
+                                <tr><td colspan="5" class="notrans">No Transaction</td></tr>
+                        {% else %}
+                        <thead>
+                            <th>Tx Hash</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Amount</th>
+                            <th>State</th>
+                        </thead>
+                        <tbody>
+                            {% for record in internalTx %}
+                            
+                                <tr>
+                                    <td>{{record.txHash}}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">{{record.fromAddr}}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">{{record.toAddr}}</td>
+                                    <td>{{record.amount}}</td>
+                                    <td>{{record.state}}</td>
+                                </tr>
+                        {% endfor%}
+                        {% endif %}
+                    </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+    {% endblock %}

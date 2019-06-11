@@ -1,0 +1,88 @@
+{% extends 'tracker/base.html' %}
+{% block cssBlock %}
+        <link rel="stylesheet" type="text/css" href="/static/css/detail.css">
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div class="detail-info">
+            <div>
+                <div class="subTitle">{{tokenInfo.tokenName}}</div>
+                <table class="table detail-table">
+                    <tbody>
+                        <tr>
+                            <td>Total Supply</td>
+                            <td>{{tokenInfo.totalSupply}}</td>
+                            <td>Contract</td>
+                            <td>
+                                <a href="{% url 'tracker:contractInfo' tokenInfo.contract %}">{{tokenInfo.contract}}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Price</td>
+                            <td>{{tokenInfo.price}}</td>
+                            <td>Decimals</td>
+                            <td>{{tokenInfo.decimals}}</td>
+                        </tr>
+                        <tr>
+                            <td>Holders</td>
+                            <td>{{tokenInfo.holders}}</td>
+                            <td>Transfers</td>
+                            <td>{{tokenInfo.transfers}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="detail-more">
+            <div class="subTitle">Transactions</div>
+            <div class="info-msg">Latest {{tokenInfo.transfers}} Txn(s) from a total of <a href="{% url 'tracker:tokenTx' tokenInfo.contract %}">{{tokenInfo.transfers}} transaction(s)</a>
+            <div>
+                <table class="table">
+                    <thead>
+                        <th>Tx Hash</th>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Quantity</th>
+                        <th>TxFee</th>
+                    </thead>
+                    <tbody>
+                        {% for record in tokenTx %}
+                        
+                            <tr>
+                                <td class="text-truncate" style="max-width: 300px;">
+                                    <a href="{% url 'tracker:txTracker' record.txHash %}">{{record.txHash}}</a>
+                                </td>
+                                <td>{{record.age}}</td>
+                                <td class="text-truncate" style="max-width: 100px;">
+                                    {% if tokenInfo.contract == record.fromAddr %}
+                                        {{record.fromAddr}}
+                                    {% elif 'cx' in record.fromAddr %}
+                                        <a href="{% url 'tracker:contractInfo' record.fromAddr %}">{{record.fromAddr}}</a>
+                                    {% elif 'hx' in record.fromAddr %}
+                                        <a href="{% url 'tracker:addressInfo' record.fromAddr %}">{{record.fromAddr}}</a>
+                                    {% else %}
+                                        {{record.fromAddr}}
+                                    {% endif %}
+                                </td>
+                                <td class="text-truncate" style="max-width: 100px;">
+                                    {% if tokenInfo.contract == record.toAddr %}
+                                        {{record.toAddr}}
+                                    {% elif 'cx' in record.toAddr %}
+                                        <a href="{% url 'tracker:contractInfo' record.toAddr %}">{{record.toAddr}}</a>
+                                    {% elif 'hx' in record.toAddr %}
+                                        <a href="{% url 'tracker:addressInfo' record.toAddr %}">{{record.toAddr}}</a>
+                                    {% else %}
+                                        {{record.toAddr}}
+                                    {% endif %}
+                                </td>
+                                <td>{{record.quantity}}</td>
+                                <td>{{record.fee}}</td>
+                            </tr>
+                {% endfor%}
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

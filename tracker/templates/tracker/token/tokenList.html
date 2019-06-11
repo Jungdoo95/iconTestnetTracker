@@ -1,0 +1,58 @@
+{% extends 'tracker/base.html' %}
+{% block jsBlock %}
+    <script src="/static/js/tablePageCount.js" type="text/javascript"></script>
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div class="info-list">
+            <div class="subTitle">Tokens</div>
+            <table class="table">
+                <thead>
+                    <th>NO.</th>
+                    <th>Token</th>
+                    <th>Price</th>
+                    <th>% Change(24H)</th>
+                    <th>Volume</th>
+                    <th>MarketCap</th>
+                </thead>
+                <tbody>
+                    {% for record in tokenList %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td >
+                                <a href="{% url 'tracker:tokenInfo' record.contractAddr %}">{{record.name}}</a>
+                            </td>
+                            <td>
+                                <ul>
+                                    {% for key, value in record.price.items %}
+                                    {% if value == None %}
+                                        <li> - {{key}}</li>
+                                    {% else %}
+                                        <li> {{value}} - {{key}}</li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td>{{record.changeVal}}%</td>
+                            <td>
+                                {% if record.volume == None %}
+                                    -
+                                {% else %}
+                                {{record.volume}}
+                                {% endif %} USD
+                            </td>
+                            <td>
+                                {% if record.marketCap == None %}
+                                    -
+                                {% else %}
+                                    {{record.marketCap}}
+                                {% endif %} USD                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "tracker/list-table-info.html" %}
+    </div>
+{% endblock %}

@@ -1,0 +1,129 @@
+
+{% extends 'tracker/base.html' %}
+    {% block cssBlock %}
+        <style>
+            .mainData{
+                display: inline-block;
+                overflow: hidden;
+            }
+            .mainData div{
+                margin: 0px 5px;
+            }
+            .mainDataTable{
+                height: 646px;
+                width:620px;
+                overflow-y:auto;
+            }
+            .mainDataTable {
+                padding: 0px 0px;
+                border-top: 2px solid gray;
+                border-bottom: 2px solid gray;
+            }
+            .table{
+                border-top: 1px solid #dee2e6;
+                margin-bottom: 0;
+            }
+            .table td{
+                border-top:0px !important;
+            }            
+            .table a{
+                color: #1aaaba;
+                cursor: pointer;
+            }
+            .table .block-img{
+                padding: 1.5rem 0;
+            }
+            .table .tx-img{
+                width: 130px;
+                padding: 2.3rem 0;
+            }
+            .block-img{
+                background-image: url( "/static/images/block.png" );
+                background-position: center center;
+                background-size: 80px;
+                background-repeat: no-repeat;
+            }
+            .tx-img{
+                background-image: url("/static/images/tx.png");
+                background-position: center center;
+                background-size: 80px;
+                background-repeat: no-repeat;
+            }
+            .tmainBlock{
+                width: 620px;
+            }
+            .tmainTx{
+                width: 620px;
+            }
+        </style>
+    {% endblock%}
+       
+    {% block contentBlock %}
+    <div class="content-wrap">
+        <div class="mainData">
+            <div class="tmainBlock float-left">
+                <div class="text-center subTitle">BLOCK</div>
+                <div class="mainDataTable scrollbar">
+                {% for blockInfo in mainData.tmainBlock %}
+                <table class="table table-sm">
+                    
+                    <tbody>
+                        <tr>
+                            <td rowspan=4 class="text-center block-img" >
+                                <span>BLOCK</span><br>
+                                <span><a href="{% url 'tracker:blockTracker' blockInfo.blockHeight%}">{{blockInfo.blockHeight}}</a></span>
+                            </td>
+                            <td>Hash</td>
+                            <td class="text-truncate font-seaGreen" style="max-width: 200px;">
+                                <a href="{% url 'tracker:blockTracker' blockInfo.blockHeight%}">{{blockInfo.hash}}</a>
+                        </tr>
+                        <tr>
+                            <td>Tx Count</td>
+                            <td class="text-truncate" style="max-width: 200px;">{{blockInfo.txCount}} </td>
+                        </tr>
+                        <tr>
+                            <td>Time Stamp</td>
+                            <td class="text-truncate" style="max-width: 200px;">{{blockInfo.createDate}} </td>
+                        </tr>
+                    </tbody>
+                </table>            
+                {% endfor %}
+                </div>
+            </div>
+            <!-- TX INFO TABLES -->
+            <div class="tmainTx float-left">
+                <div class="text-center subTitle">Transactions</div>
+                <div class="mainDataTable scrollbar">
+                {% for txInfo in mainData.tmainTx %}
+                <table class="table table-sm">
+                    
+                    <tbody>
+                        <tr>
+                            <td rowspan=6 class="text-center tx-img" >
+                                {% if txInfo.state == 1 %}
+                                    <span>SUCCESS</span>
+                                {% else %}
+                                    <span>FAIL</span>
+                                {% endif %}
+                            </td>
+                            <td>Tx Hash</td>
+                            <td class="text-truncate font-seaGreen" style="max-width: 200px;">
+                                <a href="{% url 'tracker:txTracker' txInfo.txHash %}">{{txInfo.txHash}}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td>{{txInfo.amount}}</td>
+                        </tr>
+                        <tr>
+                            <td>Fee</td>
+                            <td>{{txInfo.fee}}</td>
+                        </tr>
+                    </tbody>
+                </table>            
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+   {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'tracker/base.html' %}
+{% block jsBlock %}
+    <script src="/static/js/tablePageCount.js" type="text/javascript"></script>  
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div class="addressList">
+            <div class="subTitle">Address</div>
+            <div class="">
+                <table class="table">
+                    <thead>
+                        <th>Address</th>
+                        <th>ICX Balance</th>
+                        <th>ICX USD Value</th>
+                        <th>Percentage</th>
+                        <th>No of Txns</th>
+                        <th>Node Type</th>
+                    </thead>
+                    <tbody>
+                        {% for record in addressList%}
+                        <tr>
+                            <td><a href="{% url 'tracker:addressInfo' record.address %}">{{record.address}}</a></td>
+                            <td>{{record.balance}}</td>
+                            <td>{{record.icxUsd}}</td>
+                            <td>{{record.Percentage}}</td>
+                            <td>{{record.txCount}}</td>
+                            <td>{{record.nodeType}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% include 'tracker/list-table-info.html'%}
+            </div>
+        </div>
+    </div>
+{% endblock %}

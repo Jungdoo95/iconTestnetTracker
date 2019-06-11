@@ -1,0 +1,67 @@
+.table{
+    font-size: 12px !important;
+}
+
+.list-group li{
+    display: block;
+    cursor: pointer;
+    padding: 14px 0;
+    position: relative;
+}
+.list-group li:first-child p{
+    border-top: none;
+}
+.list-group li p{
+    font-size: 12px;
+    margin: 0 20px;
+    width: auto;
+}
+.list-group li p em{
+    display: inline-block;
+}
+.list-group li p em:first-child{
+    width: 260px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+.list-group li p em:nth-child(2){
+    width: 106px;
+    text-align: right;
+}
+.list-group li p em:nth-child(3){
+    width: 24px;
+    color: #b3b3b3;
+    text-align: right;
+}
+.detail-table{
+    border: 2px solid black;
+    margin: 10px 0px;
+}
+.detail-table em{
+    color: black;
+    font-weight: 600;
+}
+.detail-table td:nth-child(2n-1){
+    background-color: #f0f2f5;
+    font-weight: bold;
+}
+.detail-more .table .table-sign{
+    font-weight: 500;
+}
+.detail-more .table .table-sign span{
+    width: 33px;
+    height: 16px;
+    display: inline-block;
+    border-radius: 10px;
+    font-size: 9px;
+    background:#1aaaba;
+    color: #fff;
+    text-align: center;
+    line-height: 18px;
+}
+.detail-more .table .table-sign.out span{
+    background:#ff4063;
+}
+.detail-more .table .table-sign.in span{
+    background:#ff4063;
+}
