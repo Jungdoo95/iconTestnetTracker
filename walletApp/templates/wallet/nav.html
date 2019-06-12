@@ -1,0 +1,67 @@
+<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-seagreen">
+    <a class="navbar-brand" href="{% url 'tracker:index'%}">TRACKER</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">                
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="addressDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Address
+                </a>
+                <div class="dropdown-menu" aria-labelledby="addressDropdown">
+                    <a class="dropdown-item" href="{% url 'tracker:addressList' %}">Addresses List</a>
+                    <a class="dropdown-item" href="{% url 'tracker:contractsList' %}">Contracts List</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'tracker:blockList' %}">Block</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'tracker:txList' %}">Transaction</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="tokenDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Token
+                </a>
+                <div class="dropdown-menu" aria-labelledby="tokenDropdown">
+                    <a class="dropdown-item" href="{% url 'tracker:tokenList' %}">Tokens List</a>
+                    <a class="dropdown-item" href="{% url 'tracker:tokenTransfers' %}">Token Transfers List</a>
+                </div>
+            </li>                
+        </ul>
+        <form class="form-inline my-2 my-lg-0" action="{% url 'tracker:search' %}" method="POST">
+            {% csrf_token %} 
+            <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Address Hash" aria-label="Search">
+            <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+<script>
+    $().ready(function(){
+        $('.nav-item.dropdown').on('mouseover',function(){
+            $(this).addClass('show');                
+            $(this).trigger('show.bs.dropdown');
+            $(this).find('.dropdown-menu').addClass('show');
+        })
+        $('.nav-item.dropdown').on('mouseleave',function(){
+            if( $(this).hasClass('show')){
+                $(this).removeClass('show');
+                $(this).trigger('hide.bs.dropdown');
+                $(this).find('.dropdown-menu').removeClass('show');
+            }
+        })
+        
+        $('.nav-item.dropdown').on('show.bs.dropdown', function(e){
+            $(this).find('.dropdown-menu').first().stop(true, true).slideDown(300);
+        });
+        
+        $('.nav-item.dropdown').on('hide.bs.dropdown', function(e){
+            $(this).find('.dropdown-menu').first().stop(true, true).slideUp(300);
+        });
+    })
+</script>
