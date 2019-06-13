@@ -50,15 +50,13 @@ $().ready(function () {
             $('#wallet-modal-confirm').removeClass('hidden');
             post_fetch('/wallet/search/', '{"private_key":"' + $('#walletPrivateKey').val() + '"}').then(data => {
                 if (data === "fail") {
-                    $('#wallet-modal').modal('hide');
-                    Swal.fire('Error!!', 'Please Check information!', 'error');
+                    modalERROR($('#wallet-search'));
                     return;
                 }
                 console.log(data);
-                $('#wallet-modal-confirm').addClass('hidden');
-                $('#wallet-modal .modal-footer').addClass('hidden');
-                $('#wallet-modal .modal-body').html('<p>Wallet Address - <strong>' + data.address + '</strong> </p>'
-                    + '<p>Wallet private Key - <strong>' + data.private_key + '</strong> </p>');
+                $('#wallet-search-confirm').addClass('hidden');
+                $('#wallet-search .modal-footer').addClass('hidden');
+                $('#wallet-search .modal-body').html('<p>Wallet Address - <strong>' + data.address + '</strong> </p>');
             });
         }
     })
@@ -183,14 +181,23 @@ function modalERROR($modal, erroMsg='Please Check information!'){
 }
 function copyclipboard(){    
     post_fetch("/wallet/create/get/privateKey", '{}').then(data => {
-        var t = document.createElement("textarea");
-        document.body.appendChild(t);
-        t.value = data.private_key;
-        t.select();
-        document.execCommand('copy');
-        document.body.removeChild(t);
+       return data.private_key;
+    }).then( key =>{
+        if( is_ie() ) {
+            window.clipboardData.setData("Text", key);
+            alert("복사되었습니다.");
+            return;
+          }
+          prompt("Ctrl+C를 눌러 복사하세요.", key);
     });    
 }
+function is_ie() {
+    if(navigator.userAgent.toLowerCase().indexOf("chrome") != -1) return false;
+    if(navigator.userAgent.toLowerCase().indexOf("msie") != -1) return true;
+    if(navigator.userAgent.toLowerCase().indexOf("windows nt") != -1) return true;
+    return false;
+  }
+
 function emptyFormCheck($form){
     isEmpty = false;
     $form.find('input').each(function(){

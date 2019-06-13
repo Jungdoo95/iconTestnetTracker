@@ -2,6 +2,10 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.views import generic
+
+import requests
+import math
+from bs4 import BeautifulSoup
 import json
 import shutil
 import os
@@ -40,7 +44,8 @@ def createWallet(request):
     wallet = KeyWallet.create()
     wallet_status = { "status" : "ok"}
     print( os.path.dirname(os.path.abspath(__file__)))
-    wallet.store( BASE_DIR+"/keystore/"+data['wallet_name'],data['wallet_password'])
+    os.mkdir(BASE_DIR+"/keystore/"+request.session.session_key+'/')
+    wallet.store( BASE_DIR+"/keystore/"+request.session.session_key+'/'+data['wallet_name'],data['wallet_password'])
     request.session['wallet_name'] = data['wallet_name']
     request.session['wallet_password'] = data['wallet_password']
     # file_path = BASE_DIR+wallet.get_address()+"/keystore"
@@ -48,7 +53,7 @@ def createWallet(request):
     return JsonResponse(wallet_status);
 
 def keystoreDownload(request): 
-    file_path= BASE_DIR+"/keystore/"+request.session['wallet_name']
+    file_path= BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['wallet_name']
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read())
@@ -58,7 +63,7 @@ def keystoreDownload(request):
 
 def walletPrivateKey(request):
     try:
-        file_path= BASE_DIR+"/keystore/"+request.session['wallet_name']
+        file_path= BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['wallet_name']
         wallet = KeyWallet.load(file_path, request.session['wallet_password'])
         wallet_json = { "address" : wallet.get_address(),
                         "private_key" : wallet.get_private_key()}
@@ -69,9 +74,9 @@ def walletPrivateKey(request):
 def walletCreateClose(request):
     result = {"status": "ok"}
     try:
-        file_path= BASE_DIR+"/keystore/"+request.session['wallet_name']
+        file_path= BASE_DIR+"/keystore/"+request.session.session_key
         if os.path.exists(file_path):
-            os.remove(file_path)
+            shutil.rmtree(file_path, ignore_errors=True)
     except Exception:
         print("NOT FOUND FILE PATH")        
         result['status'] = "fail"
@@ -91,12 +96,10 @@ def searchWallet(request):
     print(type(data))  
     j = json.loads(data)
     print("json.loads(json) >> "+j['private_key'])
-    key = bytes(j['private_key'],'utf8')
+    key = bytes.fromhex(j['private_key'])
     print("bytes json['private_key'] >> ")
     print(key)
     wallet = KeyWallet.load(key)
-    params = { "address" : wallet.get_address()}    
-    res = requests.get("https://bicon.tracker.solidwallet.io/v3/address/info", params=params)
-    walletData = res.json()
-
-    return JsonResponse(walletData.get('data'))
+    params = { "address" : wallet.get_address()}
+    print("wallet addr >> "+ wallet.get_address())        
+    return JsonResponse(params)

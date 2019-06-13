@@ -74,17 +74,21 @@ def address(request, address):
     params = {"address":address}
     res = requests.get(TEST_NET+"/address/info", params=params)
     addressInfo = res.json()
-    tokens = addressInfo.get('data').get('tokenList')
-    totalUSD= 0
-    for token in tokens:
-        if token.get('totalTokenPrice') != None:
-            totalUSD += token.get('totalTokenPrice')
+    try:
+        tokens = addressInfo.get('data').get('tokenList')
+        totalUSD= 0
+        for token in tokens:
+            if token.get('totalTokenPrice') != None:
+                totalUSD += token.get('totalTokenPrice')
+        
+        params['page']=request.GET.get('page','1')
+        params['count']=request.GET.get('count','10')
+        res = requests.get(TEST_NET+"/address/txList", params=params)
+        addressTxList = res.json()
+        return render(request, "tracker/address/address.html", {"addressInfo":addressInfo.get('data'),"totalUSD": totalUSD,"addressTxList":addressTxList.get('data')})
+    except Exception:
+        return render(request, "tracker/address/address.html", {"addressInfo":params,"totalUSD": None,"addressTxList":None})
     
-    params['page']=request.GET.get('page','1')
-    params['count']=request.GET.get('count','10')
-    res = requests.get(TEST_NET+"/address/txList", params=params)
-    addressTxList = res.json()
-    return render(request, "tracker/address/address.html", {"addressInfo":addressInfo.get('data'),"totalUSD": totalUSD,"addressTxList":addressTxList.get('data')})
 
 def addressTx(request, address):
     params = {"address":address}
