@@ -87,11 +87,12 @@ def walletCreateClose(request):
 def searchWallet(request):    
     print(request.body);
     data = json.loads(request.body)    
-    print(data)
+    print("json.loads(value) >> "+data)
     print(type(data))  
     j = json.loads(data)
-    print(j['private_key'])
+    print("json.loads(json) >> "+j['private_key'])
     key = bytes(j['private_key'],'utf8')
+    print("bytes json['private_key'] >> ")
     print(key)
     wallet = KeyWallet.load(key)
     params = { "address" : wallet.get_address()}    
