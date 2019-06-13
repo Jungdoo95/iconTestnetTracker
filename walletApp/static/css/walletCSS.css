@@ -1,0 +1,109 @@
+.sign-span {
+    width: 33px;
+    height: 16px;
+    display: inline-block;
+    border-radius: 10px;
+    font-size: 9px;
+    text-align: center;
+    line-height: 18px;
+    padding: 0 10px;
+}
+
+.sign-span.current {
+    background-color: #1aaaba;
+    color: #fff;
+}
+
+.modal-body {
+    word-wrap: break-word;
+}
+.modal-body .left-nav-content{
+    min-height: 400px;
+}
+.modal-body .left-nav-content .modal-step-content{
+    font-size: 12px;
+}
+.modal-body .left-nav-content .modal-step-content ul{
+    padding-inline-start: 0px;
+}
+.modal-body .left-nav-content .modal-step-content li{
+    font-size: 11px;
+    color : grey;
+}
+.modal-body .right-content .content-body{
+    min-height: 330px;
+}
+
+.spinner {
+    margin-right: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.mainData {
+    display: inline-block;
+    overflow: hidden;
+}
+
+.mainData div {
+    margin: 0px 5px;
+}
+
+.mainDataTable {
+    height: 646px;
+    width: 620px;
+    overflow-y: auto;
+}
+
+.mainDataTable {
+    padding: 0px 0px;
+    border-top: 2px solid gray;
+    border-bottom: 2px solid gray;
+}
+
+.table {
+    border-top: 1px solid #dee2e6;
+    margin-bottom: 0;
+}
+
+.table td {
+    border-top: 0px !important;
+}
+
+.table a {
+    color: #1aaaba;
+    cursor: pointer;
+}
+
+.table .block-img {
+    padding: 1.5rem 0;
+}
+
+.table .tx-img {
+    width: 130px;
+    padding: 2.3rem 0;
+}
+
+.block-img {
+    background-image: url("/static/images/block.png");
+    background-position: center center;
+    background-size: 80px;
+    background-repeat: no-repeat;
+}
+
+.tx-img {
+    background-image: url("/static/images/tx.png");
+    background-position: center center;
+    background-size: 80px;
+    background-repeat: no-repeat;
+}
+
+.tmainBlock {
+    width: 620px;
+}
+
+.tmainTx {
+    width: 620px;
+}
