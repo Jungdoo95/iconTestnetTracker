@@ -1,34 +1,49 @@
 $().ready(function () {
 
     $('#createWallet-btn').click(function () {
+        $('#wallet-modal .modal-body').html(`
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col left-nav">
+                                <div class="left-nav-content text-center">
+                                    <div class="step-title">Wallet Create Step 1</div>
+                                    <div class="modal-step">                                        
+                                        <span class="sign-span current">1</span>
+                                        <span class="sign-span">2</span>
+                                        <span class="sign-span">3</span>
+                                        <span class="sign-span">4</span>
+                                    </div>
+                                    <div class="modal-step-content">
+                                        <div>
+                                            Create wallet
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 right-content">
+                                <p>modal-content</p>
+                            </div>
+                        </div>
+                    </div>
+                    `)
         nextStep(1);            
         $('#wallet-modal .modal-title').text('Create Wallet');        
         $('#wallet-modal .modal-footer .btn:first-child').text("Create");
         $('#wallet-modal').modal('show');
     })
     $('#searchWallet-btn').click(function () {
-        $('#wallet-modal .modal-footer').removeClass('hidden');
-        $('#wallet-modal .modal-title').text('Search Wallet');
-        $('#wallet-modal .modal-body').html('<p>Wallet private key</p><input id="walletPrivateKey" class="form-control" type="password" placeholder="Enter Wallet Private KEY">');
-        $('#wallet-modal .modal-footer .btn:first-child').text("Search");
-        $('#wallet-modal').modal('show');
+        $('#wallet-search .modal-footer').removeClass('hidden');
+        $('#wallet-search .modal-title').text('Search Wallet');
+        $('#wallet-search .modal-body').html('<p>Wallet private key</p><input id="walletPrivateKey" class="form-control" type="password" placeholder="Enter Wallet Private KEY">');
+        $('#wallet-search .modal-footer .btn:first-child').text("Search");
+        $('#wallet-search').modal('show');
     })
     $('#wallet-modal').on('hide.bs.modal', function(){
         post_fetch("/wallet/create/close","{}");
     })
 
-    $('.modal-footer .btn:first-child').click(function () {
-        if ($('#wallet-modal .modal-title').text() === "Create Wallet") {
-            $('#wallet-modal-confirm').removeClass('hidden');
-            post_fetch('/wallet/create/', '{"wallet_name":"test_name","wallet_password":"1234"}').then(data => {
-                console.log(data);
-                $('#wallet-modal-confirm').addClass('hidden');
-                $('#wallet-modal .modal-footer').addClass('hidden');
-                $('#wallet-modal .modal-body .right-content').html('<p>Wallet Address - <strong>' + data.address + '</strong> </p>'
-                    + '<p>Wallet private Key - <strong>' + data.private_key + '</strong> </p>');
-            });
-        }
-        if ($('#wallet-modal .modal-title').text() === "Search Wallet") {
+    $('.modal-footer .btn:first-child').click(function () {        
+        if ($('#wallet-search .modal-title').text() === "Search Wallet") {
             $('#wallet-modal-confirm').removeClass('hidden');
             post_fetch('/wallet/search/', '{"private_key":"' + $('#walletPrivateKey').val() + '"}').then(data => {
                 if (data === "fail") {

@@ -7,6 +7,7 @@
 <script src="/static/javascript/walletJS.js" type="text/javascript"></script>
 {% endblock %}
 {% block contentBlock %}
+{% csrf_token %}
 <div class="content-wrap">
     <div class="mainData">
         <div class="subTitle">Wallet Apps</div>
@@ -16,7 +17,7 @@
         </div>
     </div>
     <div id="wallet-modal" class="modal" tabindex="-1" role="dialog">
-        {% csrf_token %}
+        
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-seagreen">
@@ -50,6 +51,26 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer hidden">
+                    <button type="button" class="btn btn-primary">
+                        <i class="fa fa-spinner fa-spin spinner hidden" id="wallet-modal-confirm"></i>
+                        Save changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="wallet-search" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-seagreen">
+                    <h5 class="modal-title">Search Modal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"></div>
                 <div class="modal-footer hidden">
                     <button type="button" class="btn btn-primary">
                         <i class="fa fa-spinner fa-spin spinner hidden" id="wallet-modal-confirm"></i>
