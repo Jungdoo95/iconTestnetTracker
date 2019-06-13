@@ -38,8 +38,6 @@ def createWallet(request):
     postData = json.loads(request.body)
     data = json.loads(postData)
     wallet = KeyWallet.create()
-    print("address : ", wallet.get_address())
-    print("private key : ", wallet.get_private_key())
     wallet_status = { "status" : "ok"}
     print( os.path.dirname(os.path.abspath(__file__)))
     wallet.store( BASE_DIR+"/keystore/"+data['wallet_name'],data['wallet_password'])
@@ -51,7 +49,6 @@ def createWallet(request):
 
 def keystoreDownload(request): 
     file_path= BASE_DIR+"/keystore/"+request.session['wallet_name']
-    print(file_path)
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
             response = HttpResponse(fh.read())

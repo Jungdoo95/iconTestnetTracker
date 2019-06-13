@@ -1,4 +1,7 @@
 $().ready(function () {
+    window.window.onbeforeunload = function() {
+        post_fetch("/wallet/create/close","{}");
+    }
 
     $('#createWallet-btn').click(function () {
         $('#wallet-modal .modal-body').html(`
@@ -158,7 +161,8 @@ function nextStep(current_step) {
                         <hr>
                         <div class="content-body">
                             <div class="private-key">Private KEY</div>
-                            <input class="form-control private-key-input" type="password" readonly="readyonly">
+                            <input id="wallet-private-key"class="form-control private-key-input" type="password" readonly="readyonly">
+                            <button class="btn bg-seagreen" onclick="copyclipboard();"> 복사</button>
                             </div>
                         <hr>
                         <div class="content-btn float-right">
@@ -170,12 +174,23 @@ function nextStep(current_step) {
             });
     }
 };
+
+
 function modalERROR($modal, erroMsg='Please Check information!'){
     nextStep(1);
     $modal.modal('hide');
     Swal.fire('Error!!', erroMsg, 'error');
 }
-
+function copyclipboard(){    
+    post_fetch("/wallet/create/get/privateKey", '{}').then(data => {
+        var t = document.createElement("textarea");
+        document.body.appendChild(t);
+        t.value = data.private_key;
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+    });    
+}
 function emptyFormCheck($form){
     isEmpty = false;
     $form.find('input').each(function(){
