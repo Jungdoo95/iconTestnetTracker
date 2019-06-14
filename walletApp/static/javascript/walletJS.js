@@ -37,19 +37,35 @@ $().ready(function () {
     $('#searchWallet-btn').click(function () {
         $('#wallet-search .modal-footer').removeClass('hidden');
         $('#wallet-search .modal-title').text('Search Wallet');
-        $('#wallet-search .modal-body').html('<p>Wallet private key</p><input id="walletPrivateKey" class="form-control" type="password" placeholder="Enter Wallet Private KEY">');
+        $('#wallet-search .modal-body').html(`
+                <p>Wallet private key</p>
+                <input id="walletPrivateKey" class="form-control" type="password" placeholder="Enter Wallet Private KEY">
+                <hr>
+                <div class="file-form">
+                    <div>Keystore file</div>
+                    <form action="/wallet/search/upload/" method="post" enctype="multipart/form-data">
+                        <input type="file" name="keystore" id="keystore_file">
+                        <button type="button" id="upload_keystore" onclick="uploadKeystore();">Upload</button>
+                    </form>
+                </div>`);
+        $('#wallet-search .file-form input[name="csrfmiddlewaretoken"]').val($("[name=csrfmiddlewaretoken]").val());
         $('#wallet-search .modal-footer .btn:first-child').text("Search");
         $('#wallet-search').modal('show');
-    })
+    })    
+
     $('#wallet-modal').on('hide.bs.modal', function(){
+        post_fetch("/wallet/create/close","{}");
+    })
+    $('#wallet-search').on('hide.bs.modal', function(){
         post_fetch("/wallet/create/close","{}");
     })
 
     $('.modal-footer .btn:first-child').click(function () {        
         if ($('#wallet-search .modal-title').text() === "Search Wallet") {
             $('#wallet-modal-confirm').removeClass('hidden');
-            post_fetch('/wallet/search/', '{"private_key":"' + $('#walletPrivateKey').val() + '"}').then(data => {
-                if (data === "fail") {
+            post_fetch('/wallet/search/', '{"private_key":"' + $('#walletPrivateKey').val() 
+                                        + `" ,"keystore_password":"`+$('#wallet-search input[name="keystore_password"]').val()+`"}`).then(data => {
+                if (data.status === "fail") {
                     modalERROR($('#wallet-search'));
                     return;
                 }
@@ -172,7 +188,38 @@ function nextStep(current_step) {
             });
     }
 };
+$(function () {
+    var obj = $("#dropzone");
 
+    obj.on('dragenter', function (e) {
+         e.stopPropagation();
+         e.preventDefault();
+         $(this).css('border', '2px solid #5272A0');
+    });
+
+    obj.on('dragleave', function (e) {
+         e.stopPropagation();
+         e.preventDefault();
+         $(this).css('border', '2px dotted #8296C2');
+    });
+
+    obj.on('dragover', function (e) {
+         e.stopPropagation();
+         e.preventDefault();
+    });
+
+    obj.on('drop', function (e) {
+         e.preventDefault();
+         $(this).css('border', '2px dotted #8296C2');
+
+         var files = e.originalEvent.dataTransfer.files;
+         if(files.length < 1)
+              return;
+
+         F_FileMultiUpload(files, obj);
+    });
+
+});
 
 function modalERROR($modal, erroMsg='Please Check information!'){
     nextStep(1);
@@ -241,6 +288,36 @@ function create_wallet() {
         }
     });
 }
+function uploadKeystore(){
+    $form = $('#wallet-search').find('form');
+    post_keystore('/wallet/search/upload/',$form);
+}
+
+function post_keystore(endpoint, $form){
+    const csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    let formData = new FormData();
+    formData.append("keystore", $($form).find('#keystore_file')[0].files[0]);
+    $.ajax({
+        url: endpoint,
+        headers: {
+            'X-CSRFToken': csrftoken,    
+        }, 
+        data: formData,
+        processData: false, 
+        contentType: false, 
+        type: 'POST', 
+        success: function(data){ 
+            if(data =='ok'){
+                Swal.fire('Success!' ,'Keystore file upload!','success');                
+                $($form).html('<input type="password" class="form-control" name="keystore_password" placeholder="enter Keystore password">');
+                $('#wallet-search .modal-body').html($form);                
+            }else{
+                Swal.fire('Failed!', 'Keystore file not upload!', 'error');
+            }            
+        } 
+    });
+}
+
 function post_fetch(endpoint, params) {
     const csrftoken = $("[name=csrfmiddlewaretoken]").val();
     return fetch(endpoint, {

@@ -10,4 +10,5 @@ urlpatterns = [
     path('create/keystore', views.keystoreDownload, name='downloadKeystore'),
     path('create/get/privateKey', views.walletPrivateKey, name='getPrivateKey'),
     path('search/', views.searchWallet, name='searchWallet'),
+    path('search/upload/', views.uploadKeystore, name="uploadKeystore"),
 ]

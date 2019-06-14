@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import json
 import shutil
 import os
+import glob
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -33,7 +34,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__));
 
 
 def index(request):
-    request.session['wallet_name'] = 'default';
+    # request.session['wallet_name'] = 'default';
     return render(request, 'wallet/index.html')
 
 
@@ -90,16 +91,56 @@ def walletCreateClose(request):
     
 
 def searchWallet(request):    
-    print(request.body);
-    data = json.loads(request.body)    
-    print("json.loads(value) >> "+data)
-    print(type(data))  
-    j = json.loads(data)
-    print("json.loads(json) >> "+j['private_key'])
-    key = bytes.fromhex(j['private_key'])
-    print("bytes json['private_key'] >> ")
-    print(key)
-    wallet = KeyWallet.load(key)
-    params = { "address" : wallet.get_address()}
-    print("wallet addr >> "+ wallet.get_address())        
-    return JsonResponse(params)
+    # print(request.body);
+    if os.path.exists (BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['keystore']):
+        try:
+            data = json.loads(request.body)
+            j = json.loads(data)
+            password = j['keystore_password']
+            wallet = KeyWallet.load(BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['keystore'],password);
+            params = { "address" : wallet.get_address()}
+            print("wallet addr >> "+ wallet.get_address())        
+            return JsonResponse(params)
+        except Exception as e:
+            return JsonResponse({"status":"fail", "msg":str(e)})
+
+    try:
+        data = json.loads(request.body)    
+        # print("json.loads(value) >> "+data)
+        # print(type(data))  
+        j = json.loads(data)
+        # print("json.loads(json) >> "+j['private_key'])
+        key = bytes.fromhex(j['private_key'])
+        # print("bytes json['private_key'] >> ")
+        # print(key)
+        wallet = KeyWallet.load(key)
+        params = { "address" : wallet.get_address()}
+        print("wallet addr >> "+ wallet.get_address())        
+        return JsonResponse(params)
+    except Exception:
+        return JsonResponse({"status":"fail"})
+
+
+def uploadKeystore(request):
+    if request.method == 'POST':        
+        if 'keystore' in request.FILES:
+            
+            keystore = request.FILES['keystore']
+            keystore_name = keystore._name
+            print(os.path.exists(BASE_DIR+"/keystore/"+request.session.session_key+'/'))
+            if not os.path.exists (BASE_DIR+"/keystore/"+request.session.session_key+'/'):
+                print("folder create!!!")
+                os.mkdir(BASE_DIR+"/keystore/"+request.session.session_key+'/')
+            fp = open(BASE_DIR+'/keystore/'+request.session.session_key+'/'+keystore_name, 'wb')
+            for chunk in keystore.chunks():
+                fp.write(chunk)
+            fp.close()
+            request.session['keystore'] = keystore_name;
+            return HttpResponse('ok')
+        else:
+            print('no keystore detective')
+            print(request.FILES);
+    else:
+        print('no post')
+    return HttpResponse('fail')
+    

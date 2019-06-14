@@ -108,3 +108,8 @@ li {
     max-width: 100px;
     text-align: right;
 }
+
+.kakao-login-btn{
+  border: 0;
+  background: transparent;
+}

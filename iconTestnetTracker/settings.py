@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'tracker.apps.TrackerConfig',
     'walletApp.apps.WalletappConfig',
+    'oauth.apps.OauthConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

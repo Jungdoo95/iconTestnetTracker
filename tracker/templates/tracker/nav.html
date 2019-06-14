@@ -34,6 +34,7 @@
                 </div>
             </li>                
         </ul>
+        <button class="btn bg-seagreen"><i class="fa fa-home"></i></button>
         <form class="form-inline my-2 my-lg-0" action="{% url 'tracker:search' %}" method="POST">
             {% csrf_token %} 
             <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="Address Hash" aria-label="Search">
