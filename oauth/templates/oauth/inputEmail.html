@@ -1,0 +1,12 @@
+{% extends 'tracker/base.html' %}
+
+{% block contentBlock %}
+    <div class="content-wrap">
+        <form action="{% url 'oauth:inputEmail' %}" method="POST">
+            {% csrf_token %} 
+            <input class="form-control" type="email" name="email" id="email" placeholder="Enter email">
+            <div>해당 이메일은 사용자 구별을 위해 사용됩니다</div>
+            <button type="submit">제출</button>
+        </form>
+    </div>
+{% endblock %}
