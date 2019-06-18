@@ -3,19 +3,15 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 
-<<<<<<< HEAD
 from .models import Users
 from django.utils import timezone
 
-=======
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
 import requests, json
 import uuid
 
 # Create your views here.
 
 def index(request):
-<<<<<<< HEAD
     if 'login' in request.session:
         if request.session['login']:
             check = login(request)
@@ -23,13 +19,10 @@ def index(request):
                 return HttpResponseRedirect("/oauth/input/email/")
             else:
                 del request.session['code']
-=======
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     if request.GET:
         return render(request, 'oauth/index.html', dict(request.GET))
     return render(request, 'oauth/index.html')
 
-<<<<<<< HEAD
 def login(request):
     if 'kakao' in request.session:
         loginType = 'kakao'
@@ -82,8 +75,6 @@ def inputEmail(request):
         return HttpResponseRedirect('/oauth/')
         
 
-=======
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
 def logout(request):
     print("logout...")
     del request.session['login']
@@ -136,11 +127,7 @@ def kakaoLoginResponse(request):
             res = requests.post("https://kauth.kakao.com/oauth/token", headers=headers, params=params)
             token = res.json()
             print(token)
-<<<<<<< HEAD
             email = kakaoEmailRequest(request, token['access_token'])
-=======
-            email = kakaoEmailRequest(token['access_token'])
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
             print("Email >> "+email)
             if email == "require_kakao_accoutEmail":
                 print("kakao Email Request!")
@@ -161,11 +148,7 @@ def kakaoLoginResponse(request):
     except:
         return HttpResponseRedirect('/oauth/?msg='+'kakao login fail'+'&status=fail')
         
-<<<<<<< HEAD
 def kakaoEmailRequest(request, token):
-=======
-def kakaoEmailRequest(token):
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     params='property_keys=["kakao_account.email"]'
     headers={
         "Authorization": "Bearer "+token,
@@ -173,15 +156,10 @@ def kakaoEmailRequest(token):
     }
     res = requests.post("https://kapi.kakao.com/v2/user/me", headers=headers, data=params)
     print(res)
-<<<<<<< HEAD
     print("Profile test >> ")    
     print(res.json())
     print(res.json()['id'])
     request.session['code'] = res.json()['id']
-=======
-    print("Email test >> ")    
-    print(res.json())
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     try:
         print("email check...")
         print(res.json()['kakao_account']['email'])
@@ -233,11 +211,7 @@ def facebookLoginResponse(request):
     
     token = facebookGetToken(params['code'])
     request.session['facebookToken'] = token
-<<<<<<< HEAD
     email = facebookGetEmail(request,token)
-=======
-    email = facebookGetEmail(token)
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     if email=="fail":
         request.session['facebook'] = "require_userEmail"
     else:
@@ -259,11 +233,7 @@ def facebookGetToken(code):
     print(res.json())
     return res.json()['access_token']
 
-<<<<<<< HEAD
 def facebookGetEmail(request,token):
-=======
-def facebookGetEmail(token):
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     url = "https://graph.facebook.com/me"
 
     params={
@@ -273,11 +243,8 @@ def facebookGetEmail(token):
     res = requests.get(url, params=params)
     print("facebook email ...")
     print(res.json())
-<<<<<<< HEAD
     print(res.json()['id'])
     request.session['code'] = res.json()['id']
-=======
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     if 'email' in res.json():
         return res.json()['email']
     else:
@@ -323,11 +290,7 @@ def googleLoginResponse(request):
             return HttpResponseRedirect("/oauth/google/login")
         else:
             request.session['googleToken'] = tokens['access_token']
-<<<<<<< HEAD
             email = googleGetEmail(request,tokens['access_token'])
-=======
-            email = googleGetEmail(tokens['access_token'])
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
             if email != "fail":
                 request.session['google'] = email
             else:
@@ -338,11 +301,7 @@ def googleLoginResponse(request):
             
 
 
-<<<<<<< HEAD
 def googleGetEmail(request,token):
-=======
-def googleGetEmail(token):
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     headers={
         "Authorization": "Bearer "+token
     }
@@ -353,11 +312,8 @@ def googleGetEmail(token):
     url = "https://www.googleapis.com/oauth2/v3/userinfo"
     res = requests.get(url, headers=headers, params=params)
     emailJson = res.json()
-<<<<<<< HEAD
     print(emailJson['sub'])
     request.session['code'] = emailJson['sub']
-=======
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
     print(emailJson)
     if "email" in emailJson:
         return emailJson['email']

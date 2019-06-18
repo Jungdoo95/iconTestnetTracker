@@ -1,7 +1,6 @@
 from django.db import models
 
 # Create your models here.
-<<<<<<< HEAD
 class Users(models.Model):
     idx = models.AutoField(primary_key=True)
     loginType = models.CharField(max_length=10)
@@ -15,5 +14,3 @@ class Users(models.Model):
     
     def __str__(self):
         return '{}, {}'.format(self.email ,self.lastAccess)
-=======
->>>>>>> 5228d4229e135f3cd52d7f74c89e8933dc71b654
