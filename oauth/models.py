@@ -13,4 +13,8 @@ class Users(models.Model):
     regDate = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
+<<<<<<< HEAD
         return '{}, {}'.format(self.email ,self.lastAccess)
+=======
+        return '{}, {}'.format(self.email ,self.lastAccess)
+>>>>>>> 44657a69e08fe807a2565934c6986325e500d020
