@@ -1,0 +1,236 @@
+{% extends 'tracker/base.html' %}
+{% block cssBlock %}
+<style>
+    html, body {width:100%;height:100%;margin:0;padding:0;} 
+    .map_wrap {position:relative;overflow:hidden;width:100%;height:600px;}
+    .radius_border{border:1px solid #919191;border-radius:5px;}     
+    .custom_typecontrol {position:absolute;top:10px;right:10px;overflow:hidden;width:130px;height:30px;margin:0;padding:0;z-index:1;font-size:12px;font-family:'Malgun Gothic', '맑은 고딕', sans-serif;}
+    .custom_typecontrol span {display:block;width:65px;height:30px;float:left;text-align:center;line-height:30px;cursor:pointer;}
+    .custom_typecontrol .btn {background:#fff;background:linear-gradient(#fff,  #e6e6e6);}       
+    .custom_typecontrol .btn:hover {background:#f5f5f5;background:linear-gradient(#f5f5f5,#e3e3e3);}
+    .custom_typecontrol .btn:active {background:#e6e6e6;background:linear-gradient(#e6e6e6, #fff);}    
+    .custom_typecontrol .selected_btn {color:#fff;background:#425470;background:linear-gradient(#425470, #5b6d8a);}
+    .custom_typecontrol .selected_btn:hover {color:#fff;}   
+    .custom_zoomcontrol {position:absolute;top:50px;right:10px;width:36px;height:80px;overflow:hidden;z-index:1;background-color:#f5f5f5;} 
+    .custom_zoomcontrol span {display:block;width:36px;height:40px;text-align:center;cursor:pointer;}     
+    .custom_zoomcontrol span img {width:15px;height:15px;padding:12px 0;border:none;}             
+    .custom_zoomcontrol span:first-child{border-bottom:1px solid #bfbfbf;}            
+</style>
+<style>
+    .wrap {position: absolute;left: 0;bottom: 0px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
+    .wrap * {padding: 0;margin: 0;}
+    .wrap .info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
+    .wrap .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
+    .info .title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}
+    .info .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
+    .info .close:hover {cursor: pointer;}
+    .info .body {position: relative;overflow: hidden;}
+    .info .desc {position: relative;margin: 13px 0 0 90px;height: 75px;}
+    .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+    .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
+    .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
+    .info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+    .info .link {color: #5085BB;}
+</style>
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div>지도 영역 추가 </div>
+        <div class="map_wrap">
+            <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>  
+            
+        </div>
+        <p class="modes">            
+            <button onclick="selectOverlay('POLYGON')">영역</button>
+        </p>
+        <div class="area-path">
+            
+        </div>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0461901c5e44516627df95f64a236a41&libraries=drawing"></script>
+        
+        <script>
+            var container = document.getElementById('map');
+            let status = '{{status}}';
+            console.log (status);
+            var map_option = {     
+                center: new daum.maps.LatLng(37.481400048394185, 126.88485810422921),
+                level: 3
+            };
+            if ( status.length!=0){
+                latitude = '{{latitude}}';
+                longitude = '{{longitude}}';
+                options.center = new daum.maps.LatLng(latitude, longitude);   
+            }
+
+            var map = new daum.maps.Map(container, map_option),
+                overlays=[], //지도 그림 오버레이 
+                clickOverlay = new daum.maps.CustomOverlay({});
+
+            // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+            var mapTypeControl = new daum.maps.MapTypeControl();
+
+            // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+            // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+            map.addControl(mapTypeControl, daum.maps.ControlPosition.TOPRIGHT);
+
+            // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+            var zoomControl = new daum.maps.ZoomControl();
+            map.addControl(zoomControl, daum.maps.ControlPosition.RIGHT);
+
+            var options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
+                map: map, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
+                drawingMode: [ // Drawing Manager로 제공할 그리기 요소 모드입니다
+                    daum.maps.drawing.OverlayType.MARKER,
+                    daum.maps.drawing.OverlayType.POLYLINE,
+                    daum.maps.drawing.OverlayType.RECTANGLE,
+                    daum.maps.drawing.OverlayType.CIRCLE,
+                    daum.maps.drawing.OverlayType.POLYGON
+                ],
+                // 사용자에게 제공할 그리기 가이드 툴팁입니다
+                // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
+                guideTooltip: ['draw', 'drag', 'edit'], 
+                markerOptions: { // 마커 옵션입니다 
+                    draggable: true, // 마커를 그리고 나서 드래그 가능하게 합니다 
+                    removable: true // 마커를 삭제 할 수 있도록 x 버튼이 표시됩니다  
+                },
+                polylineOptions: { // 선 옵션입니다
+                    draggable: true, // 그린 후 드래그가 가능하도록 설정합니다
+                    removable: true, // 그린 후 삭제 할 수 있도록 x 버튼이 표시됩니다
+                    editable: true, // 그린 후 수정할 수 있도록 설정합니다 
+                    strokeColor: '#39f', // 선 색
+                    hintStrokeStyle: 'dash', // 그리중 마우스를 따라다니는 보조선의 선 스타일
+                    hintStrokeOpacity: 0.5  // 그리중 마우스를 따라다니는 보조선의 투명도
+                },
+                rectangleOptions: {
+                    draggable: true,
+                    removable: true,
+                    editable: true,
+                    strokeColor: '#39f', // 외곽선 색
+                    fillColor: '#39f', // 채우기 색
+                    fillOpacity: 0.5 // 채우기색 투명도
+                },
+                circleOptions: {
+                    draggable: true,
+                    removable: true,
+                    editable: true,
+                    strokeColor: '#39f',
+                    fillColor: '#39f',
+                    fillOpacity: 0.5
+                },
+                polygonOptions: {
+                    draggable: true,
+                    removable: true,
+                    editable: true,
+                    strokeColor: '#39f',
+                    fillColor: '#39f',
+                    fillOpacity: 0.5,
+                    hintStrokeStyle: 'dash',
+                    hintStrokeOpacity: 0.5
+                }
+            };
+            var manager = new daum.maps.drawing.DrawingManager(options);
+            manager.addListener('drawend', function(data) {
+                let area = manager.getData();                
+                let len = area[daum.maps.drawing.OverlayType.POLYGON].length;
+                $('.area-path').html('')
+                for(let i=0 ; i < len; i++){                    
+                    let points = pointsToPath(area[daum.maps.drawing.OverlayType.POLYGON][i].points);
+                    let areaData = `
+                    <div class='area'>
+                        <input type="hidden" id="areaIndex" value=`+i+`> 
+                        <div class='area-points container'>                                                     
+                    `;
+                    for(let j=0; j< points.length; j++){
+                        areaData+=`<div class='row'>`;
+                        areaData+=`<div class='col ib'>`+points[j].ib + '</div>';
+                        areaData+=`<div class='col jb'>`+points[j].jb + '</div>';
+                        areaData+=`</div>`;
+                    }
+                    areaData+=`
+                        </div>
+                        <div class="area-name">
+                            <input type="text" class="form-control" name="area-name" placeholder="Enter area name">                            
+                        </div>
+                        <button class="btn bg-seagreen" name="area-insert" onclick="insertArea(this);">추가</button>
+                        <hr>
+                    </div>
+                    
+                    `;
+                    $('.area-path').append(areaData);
+                }
+            });
+            function insertArea($area){
+                area = $($area).parent();
+                areaPath = $(area).find('.row');
+                path ={};
+                ib = [];
+                jb = [];
+                for(let i=0; i<areaPath.length; i++){
+                    ib.push($(areaPath[i]).find('.ib').text());
+                    
+                    jb.push($(areaPath[i]).find('.jb').text());
+                    data={};
+                    data['x'] = $(areaPath[i]).find('.jb').text();
+                    data['y'] = $(areaPath[i]).find('.ib').text();
+                    path[i] = data;
+                }                
+                console.log($(area).find('input[name="area-name"]').val());
+                console.log(path);
+                
+                // manager.getData()[daum.maps.drawing.OverlayType.POLYGON].slice($(area).find('#areaIndex').val(), 1);
+                // $('#map svg path:nth-child('+$(area).find('#areaIndex').val()+')').remove();
+                // // manager.trigger('state_changed');
+                // $(area).remove();
+                // 그리기 관련 연구가 더 필요 
+                
+                $(area).find('button[name="area-insert"]').remove();
+                $(area).find('input[name="area-name"]').remove();
+                var $form = $('<form></form>');                
+                $form.attr('method', 'post');                
+                $form.appendTo('body');
+                $form.append("<input type='text' name='area"+$(area).find('#areaIndex').val()+"' value='"+JSON.stringify(path)+"'>")
+                $form.submit();
+                $(area).find('.area-name').append('<div>완료</div>');
+            }
+            function selectOverlay(type) {
+                // 그리기 중이면 그리기를 취소합니다
+                manager.cancel();
+
+                // 클릭한 그리기 요소 타입을 선택합니다
+                manager.select(daum.maps.drawing.OverlayType[type]);
+            }
+            function drawPolygon(polygons) {
+                var len = polygons.length, i = 0;
+
+                for (; i < len; i++) {
+                    var path = pointsToPath(polygons[i].points);
+                    var style = polygons[i].options;
+                    var polygon = new daum.maps.Polygon({
+                        map: map,
+                        path: path,
+                        strokeColor: style.strokeColor,
+                        strokeOpacity: style.strokeOpacity,
+                        strokeStyle: style.strokeStyle,
+                        strokeWeight: style.strokeWeight,
+                        fillColor: style.fillColor,
+                        fillOpacity: style.fillOpacity
+                    });
+
+                    overlays.push(polygon);
+                }
+            }
+            function pointsToPath(points) {
+                var len = points.length, 
+                    path = [], 
+                    i = 0;
+
+                for (; i < len; i++) { 
+                    var latlng = new daum.maps.LatLng(points[i].y, points[i].x);
+                    path.push(latlng); 
+                }
+
+                return path;
+            }
+        </script>
+    </div>
+{% endblock %}
