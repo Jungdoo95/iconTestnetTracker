@@ -182,7 +182,7 @@ def facebookLogin(request):
         request.session.save()
     params={
         "client_id":"394590811398500",
-        "redirect_uri":"http://localhost:8000/oauth/kakao/response",
+        "redirect_uri":"http://localhost:8000/oauth/facebook/response",
         "state":{
             "user" : request.session['facebook_state'],
             "st" : request.session.session_key
