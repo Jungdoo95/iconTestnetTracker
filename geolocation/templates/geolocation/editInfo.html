@@ -1,0 +1,437 @@
+{% extends 'tracker/base.html' %}
+{% block cssBlock %}
+<link href="/static/css/colorpicker.css" rel="stylesheet">
+<style>
+    html, body {width:100%;height:100%;margin:0;padding:0;} 
+    .map_wrap {position:relative;overflow:hidden;width:100%;height:600px;}
+    .radius_border{border:1px solid #919191;border-radius:5px;}     
+    .custom_typecontrol {position:absolute;top:10px;right:10px;overflow:hidden;width:130px;height:30px;margin:0;padding:0;z-index:1;font-size:12px;font-family:'Malgun Gothic', '맑은 고딕', sans-serif;}
+    .custom_typecontrol span {display:block;width:65px;height:30px;float:left;text-align:center;line-height:30px;cursor:pointer;}
+    .custom_typecontrol .btn {background:#fff;background:linear-gradient(#fff,  #e6e6e6);}       
+    .custom_typecontrol .btn:hover {background:#f5f5f5;background:linear-gradient(#f5f5f5,#e3e3e3);}
+    .custom_typecontrol .btn:active {background:#e6e6e6;background:linear-gradient(#e6e6e6, #fff);}    
+    .custom_typecontrol .selected_btn {color:#fff;background:#425470;background:linear-gradient(#425470, #5b6d8a);}
+    .custom_typecontrol .selected_btn:hover {color:#fff;}   
+    .custom_zoomcontrol {position:absolute;top:50px;right:10px;width:36px;height:80px;overflow:hidden;z-index:1;background-color:#f5f5f5;} 
+    .custom_zoomcontrol span {display:block;width:36px;height:40px;text-align:center;cursor:pointer;}     
+    .custom_zoomcontrol span img {width:15px;height:15px;padding:12px 0;border:none;}             
+    .custom_zoomcontrol span:first-child{border-bottom:1px solid #bfbfbf;}            
+</style>
+<style>
+    .wrap {position: absolute;left: 0;bottom: 0px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
+    .wrap * {padding: 0;margin: 0;}
+    .wrap .info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}
+    .wrap .info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}
+    .info .title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}
+    .info .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
+    .info .close:hover {cursor: pointer;}
+    .info .body {position: relative;overflow: hidden;}
+    .info .desc {position: relative;margin: 13px 0 0 90px;height: 75px;}
+    .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+    .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
+    .info .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
+    .info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+    .info .link {color: #5085BB;}
+    #drop {
+        min-height: 150px;
+        width: 250px;
+        border: 1px solid blue;
+        margin: 10px;
+        padding: 10px;
+    }
+    #drop img{
+        max-width: 200px;
+    }
+    .colorSelector {
+        border: #000000 solid 2px;
+        width: 30px;
+        height:  30px;    
+    }
+    .hidden{
+        display: none;
+    }
+</style>
+{% endblock %}
+{% block jsBlock %}    
+    <script src="/static/javascripts/colorpicker.js" type="text/javascript"></script>
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <div>지도 영역 정보 추가</div>
+        <div class="container">
+            <div class="row">
+            <div class="map_wrap col ">
+                <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>  
+                
+            </div>
+            <div class="col">
+                <div>오버레이 정보</div>
+                <div class="row">
+                    <div class="col-3">타이틀 명</div> 
+                    <div class="col"><input type="text" name="customOverlay-title" id="customOverlay-title"></div>                                       
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <div>타이틀 배경색</div>
+                    </div> 
+                    <div class="col">
+                        <div id="customOverlay-titleBGColor" class="colorSelector"></div>
+                    </div>
+                    <div class="col-3">
+                        <div>글자 색</div>
+                    </div> 
+                    <div class="col">
+                        <div id="customOverlay-titleColor" class="colorSelector"></div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">이미지 소스</div> 
+                    <div class="col">
+                        <div id="status">Drag the files from a folder to a selected area ...</div>
+                        <div id="drop">Drop files here.</div>
+                        <input type="file" class="hidden" name="upload-img" id="upload-img" accept="image/*">
+                    </div>                    
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">지역 정보</div>
+                    <div class="col"><input type="text" name="customOverlay-ellipsis" id="customOverlay-ellipsis"></div>
+                </div>
+                <div class="row">
+                    <div class="col-3">우편 번호</div>
+                    <div class="col"><input type="text" name="customOverlay-jibun" id="customOverlay-jibun"></div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-3">홈페이지 주소</div> <div class="col"><input type="text" name="customOverlay-link" id="customOverlay-link"></div>                    
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="check-previewInfo">
+            <button class="btn" onclick="checkPreview();">check</button>
+            <div id="previewInfo"><pre></pre></div>
+        </div>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0461901c5e44516627df95f64a236a41"></script>
+        
+        <script>
+            var path = '{{path}}';
+            var container = document.getElementById('map');
+            let status = '{{status}}';
+            console.log (status);
+            var map_option = {     
+                center: new daum.maps.LatLng(37.481400048394185, 126.88485810422921),
+                level: 3
+            };
+            if ( status.length!=0){
+                latitude = '{{latitude}}';
+                longitude = '{{longitude}}';
+                options.center = new daum.maps.LatLng(latitude, longitude);   
+            }
+
+            var map = new daum.maps.Map(container, map_option),
+                customOverlay= new daum.maps.CustomOverlay({}),
+                clickOverlay = new daum.maps.CustomOverlay({});
+
+            // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+            var mapTypeControl = new daum.maps.MapTypeControl()
+
+            // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+            // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+            map.addControl(mapTypeControl, daum.maps.ControlPosition.TOPRIGHT);
+
+            // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+            var zoomControl = new daum.maps.ZoomControl();
+            map.addControl(zoomControl, daum.maps.ControlPosition.RIGHT);
+
+            if (path != ""){
+                path = path.replace(/&quot;/g,"\"");
+                console.log("===============================");
+                console.log(path);
+                console.log("===============================");
+                console.log( JSON.parse(path))
+                console.log("===============================");
+                path = JSON.parse(path);
+                let areas = [];
+                let center_x=0;
+                let center_y=0;
+                for(let i=0; i< Object.keys(path).length; i++){
+                    areas.push(new daum.maps.LatLng(path[i]['x'], path[i]['y']));
+                    center_x += Number(path[i]['x']);
+                    center_y += Number(path[i]['y']);
+                }
+                console.log(areas)
+                center_x = center_x/Object.keys(path).length;
+                center_y = center_y/Object.keys(path).length;
+                map.setCenter(new daum.maps.LatLng(center_x, center_y));
+                // manager.put(daum.maps.drawing.OverlayType.POLYGON, areas);
+                var editArea =  new daum.maps.Polygon({
+                    path:areas,
+                    strokeWeight:2,
+                    strokeColor: '#39f',
+                    fillColor: '#39f',
+                    fillOpacity: 0.5
+                })
+                editArea.setMap(map);
+            }
+            var center = map.getCenter();
+            var searchInfo
+            $.ajax({
+                method: "POST",
+                async: false,
+                url: "/geolocation/search/",
+                data: {"x":center.getLng(),"y":center.getLat()},
+                success(res){
+                    console.log(res.documents[0])
+                    searchInfo = res.documents[0];
+                }
+            })
+            var content = `<div class="wrap">
+                                <div class="info">
+                                    <div class="title" id="preview-title">
+                                        타이틀
+                                    <div class="close" title="닫기"></div>
+                                </div>
+                                <div class="body">   
+                                    <div class="img">   
+                                        <img id="preview-img" src="/static/images/maps/sm_logo.png" width="73" height="70">   
+                                    </div>         
+                                <div class="desc">`;        
+            if(searchInfo.road_address != null){
+                content+=`<div id="preview-ellipsis" class="ellipsis">`+searchInfo.road_address.address_name+`</div>`;
+            }else{
+                content+=`<div id="preview-ellipsis" class="ellipsis">`+"지역 정보"+`</div>`;
+            }                    
+            if (searchInfo.address != null){
+                content += `<div id="preview-jibun" class="jibun ellipsis">`+searchInfo.address.address_name+`</div>`;
+            }else{
+                content+=`<div id="preview-jibun" class="ellipsis">`+"우편 번호"+`</div>`;
+            }
+            content+= `<div><a id="preview-link" href="#" target="_blank" class="link">홈페이지</a></div>`;
+            content +=  `</div></div></div></div>`;
+            
+            customOverlay.setContent(content);
+            customOverlay.setPosition(map.getCenter());
+            customOverlay.setMap(map);
+
+            $('#customOverlay-title').on("propertychange change keyup paste input", function(){
+                if($(this).val().trim().length ==0){
+                    $('#preview-title').text("타이틀");
+                }else{
+                    $('#preview-title').text($(this).val());
+                }
+            });
+            $('#customOverlay-ellipsis').on("propertychange change keyup paste input", function(){
+                if($(this).val().trim().length == 0){
+                    $('#preview-ellipsis').text("지역 정보");
+                }else{
+                    $('#preview-ellipsis').text($(this).val());
+                }
+            })
+            $('#customOverlay-jibun').on("propertychange change keyup paste input", function(){
+                if($(this).val().trim().length == 0){
+                    $('#preview-jibun').text("지역 정보");
+                }else{
+                    $('#preview-jibun').text($(this).val());
+                }
+            })
+            $('#customOverlay-link').on("propertychange change keyup paste input", function(){
+                $('#preview-link').attr('href',$(this).val());
+            });
+        </script>
+        <script>
+            $('#customOverlay-titleBGColor').css('background',$('#preview-title').css('background'))            
+            $('#customOverlay-titleBGColor').ColorPicker({
+                color: $('#preview-title').css('background'),
+                onShow: function (colpkr) {
+                    $(colpkr).fadeIn(500);
+                    return false;
+                },
+                onHide: function (colpkr) {
+                    $(colpkr).fadeOut(500);
+                    return false;
+                },
+                onChange: function (hsb, hex, rgb) {
+                    $('#customOverlay-titleBGColor').css('backgroundColor', '#' + hex);
+                    $('#preview-title').css('background', '#'+hex);
+                }
+            });
+            $('#customOverlay-titleColor').css('background',$('#preview-title').css('color'))            
+            $('#customOverlay-titleColor').ColorPicker({
+                color: $('#preview-title').css('color'),
+                onShow: function (colpkr) {
+                    $(colpkr).fadeIn(500);
+                    return false;
+                },
+                onHide: function (colpkr) {
+                    $(colpkr).fadeOut(500);
+                    return false;
+                },
+                onChange: function (hsb, hex, rgb) {
+                    $('#customOverlay-titleColor').css('backgroundColor', '#' + hex);
+                    $('#preview-title').css('color', '#'+hex);
+                }
+            });
+        </script>
+        <script>
+            $('#drop').click(function(){
+                $('#upload-img').trigger('click');
+            })
+            $('#upload-img').change(function(e){
+                var files = this.files;
+                for(let i=0; i< files.length; i++){
+                    let file = files[i];
+                    let reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    addEventHandler(reader, 'loadend', function(e, file) {
+                        var bin = this.result;
+                        var newFile = document.createElement('div');
+                        newFile.innerHTML = 'Loaded : ' + file.name + ' size ' + file.size + ' B';
+                        // drop.innerHTML(newFile);
+                        // list.appendChild(newFile);
+                        // var fileNumber = list.getElementsByTagName('div').length;
+                        // status.innerHTML = fileNumber < files.length ?
+                        //     'Loaded 100% of file ' + fileNumber + ' of ' + files.length + '...' :
+                        //     'Done loading. processed ' + fileNumber + ' files.';
+
+                        var img = document.createElement("img");
+                        img.file = file;
+                        img.src = bin;
+                        $('#drop').find('img').remove();
+                        $('#drop').append(img);
+                        $('#preview-img').attr('src',bin);
+                        // list.appendChild(img);
+                    }.bindToEventHandler(file));
+                }
+            })
+            if (window.FileReader) {
+                var drop;
+                addEventHandler(window, 'load', function() {
+                    var status = document.getElementById('status');
+                    drop = document.getElementById('drop');
+                    var list = document.getElementById('list');
+
+                    function cancel(e) {
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    }
+                    return false;
+                    }
+
+                    // Tells the browser that we *can* drop on this target
+                    addEventHandler(drop, 'dragover', cancel);
+                    addEventHandler(drop, 'dragenter', cancel);
+
+                    addEventHandler(drop, 'drop', function(e) {
+                    e = e || window.event; // get window.event if e argument missing (in IE)   
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } // stops the browser from redirecting off to the image.
+
+                    var dt = e.dataTransfer;
+                    var files = dt.files;
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        var reader = new FileReader();
+
+                        //attach event handlers here...
+                        console.log("files > "+files.length);
+                        reader.readAsDataURL(file);
+                        addEventHandler(reader, 'loadend', function(e, file) {
+                        var bin = this.result;
+                        var newFile = document.createElement('div');
+                        newFile.innerHTML = 'Loaded : ' + file.name + ' size ' + file.size + ' B';
+                        // drop.innerHTML(newFile);
+                        // list.appendChild(newFile);
+                        // var fileNumber = list.getElementsByTagName('div').length;
+                        // status.innerHTML = fileNumber < files.length ?
+                        //     'Loaded 100% of file ' + fileNumber + ' of ' + files.length + '...' :
+                        //     'Done loading. processed ' + fileNumber + ' files.';
+
+                        var img = document.createElement("img");
+                        img.file = file;
+                        img.src = bin;
+                        $(drop).find('img').remove();
+                        drop.appendChild(img);
+                        $('#preview-img').attr('src',bin);
+                        // list.appendChild(img);
+                        }.bindToEventHandler(file));
+                    }
+                    return false;
+                    });
+                    Function.prototype.bindToEventHandler = function bindToEventHandler() {
+                    var handler = this;
+                    var boundParameters = Array.prototype.slice.call(arguments);
+                    //create closure
+                    return function(e) {
+                        e = e || window.event; // get window.event if e argument missing (in IE)   
+                        boundParameters.unshift(e);
+                        handler.apply(this, boundParameters);
+                    }
+                    };
+                });
+                } else {
+                document.getElementById('status').innerHTML = 'Your browser does not support the HTML5 FileReader.';
+                }
+
+                function addEventHandler(obj, evt, handler) {
+                if (obj.addEventListener) {
+                    // W3C method
+                    obj.addEventListener(evt, handler, false);
+                } else if (obj.attachEvent) {
+                    // IE method.
+                    obj.attachEvent('on' + evt, handler);
+                } else {
+                    // Old school method.
+                    obj['on' + evt] = handler;
+                }
+                }
+        </script>
+        <script>
+            function checkPreview(){
+                let titleName;
+                let titleBGColor;
+                let titleColor;
+                let ellipsis;
+                let jibun;
+                let img;
+                let link;
+                titleName = $('#preview-title').text().trim();
+                titleBGColor = $('#preview-title').css('background');
+                titleColor = $('#preview-title').css('color');
+                ellipsis = $('#preview-ellipsis').text().trim();
+                jibun = $('#preview-jibun').text().trim();
+                img = $('#preview-img').attr('src');
+                link = $('#preview-link').attr('href');
+                let preview = {
+                    titleName: titleName,
+                    titleBGColor :titleBGColor,
+                    titleColor : titleColor,
+                    ellipsis : ellipsis,
+                    jibun : jibun,
+                    img : img,
+                    link : link,
+                    path : JSON.stringify(path)
+                }
+                
+                $('#previewInfo pre').text(JSON.stringify(preview, null, 4));
+                console.log(preview);
+                $.ajax({
+                    method: "POST",
+                    url: 'editInfo/',
+                    data: preview,
+                    success: function (res){
+                        console.log(res);
+                        if (res.message == "success"){
+                            document.location.href="/geolocation/"
+                        }                        
+                    },
+                    fail: function(error){
+                        console.log(error);
+                    }
+                })
+            }   
+        </script>
+</div>
+{% endblock %}
