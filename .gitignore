@@ -1,3 +1,4 @@
-.pyc
+*.pyc
 .vscode/
 walletApp/keystore/
+geolocation/static/images/maps/
