@@ -3,16 +3,22 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
+<<<<<<< HEAD
 from .models import *
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
 
 import geoip2.database
 import os
 import requests
 import ast
 import json
+<<<<<<< HEAD
 import string
 import random
 import base64
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
 from ipware.ip import get_ip
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__));
@@ -58,6 +64,7 @@ def insertArea(request):
         return render(request, 'geolocation/editInfo.html', {"path": pathData})
 
 @csrf_exempt
+<<<<<<< HEAD
 def editInfo(request):
     if request.method == "POST":
         print(request.POST);
@@ -104,6 +111,8 @@ def editInfo(request):
             return response
 
 @csrf_exempt
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
 def locationSearch(request):
     # key ce9e623119a6eaf17429360798694f13
     # url https://dapi.kakao.com/v2/local/geo/coord2regioncode.json

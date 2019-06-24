@@ -47,6 +47,7 @@
         <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=0461901c5e44516627df95f64a236a41"></script>
         <script>
             var areas= [
+<<<<<<< HEAD
                 
             ];
         </script>
@@ -84,6 +85,23 @@
 
         </script>
         {% endif %}
+=======
+                {
+                    name: "소프트매니아",
+                    path: [
+                        new daum.maps.LatLng(37.48130987052669, 126.88477909963379),
+                        new daum.maps.LatLng(37.48137317232565, 126.88501643154571),
+                        new daum.maps.LatLng(37.481508235339454, 126.88492577523),
+                        new daum.maps.LatLng(37.48148099571085, 126.88471099987858),
+                    ],
+                    img_src: "https://www.softmania.co.kr/images/sm_logo.png",
+                    ellipsis: "(지번)서울 금천구 가산동 60-11 ",
+                    jibun: "(우) 08510  스타밸리 1301호",
+                    homepage: "https://www.softmaina.co.kr/"                    
+                } 
+            ];
+        </script>
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
         <script>
             var container = document.getElementById('map');
             let status = '{{status}}';
@@ -100,9 +118,15 @@
 
             var map = new daum.maps.Map(container, options),
                 clickOverlay = new daum.maps.CustomOverlay({});
+<<<<<<< HEAD
 
             
 
+=======
+
+            
+
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             function displayArea(area){
                 console.log("area init")
                 var polygon = new daum.maps.Polygon({
@@ -115,7 +139,12 @@
                     fillOpacity: 0.7 
                 })
                 console.log("area done!")
+<<<<<<< HEAD
                 daum.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {                    
+=======
+                daum.maps.event.addListener(polygon, 'mouseover', function(mouseEvent) {
+                    console.log("mouseover")
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                     polygon.setOptions({fillColor: '#09f'});
                 });
                 daum.maps.event.addListener(polygon, 'mouseout', function() {
@@ -125,11 +154,17 @@
                 daum.maps.event.addListener(polygon, 'click', function(mouseEvent) {
                 // customOverlay.setPosition(mouseEvent.latLng); 
                     
+<<<<<<< HEAD
                     clickOverlay.setMap(null);                    
+=======
+                    clickOverlay.setMap(null);
+                    console.log(mouseEvent.latLng);
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                     // console.log(overlay.Ub)
                     // console.log($(overlay.Ub).find('.title').text())
                     var content = `<div class="wrap">
                                         <div class="info">
+<<<<<<< HEAD
                                             <div class="title" style="`;
                                     if (area.titleBG !=null){
                                         content+= "background:"+area.titleBG+";";
@@ -138,6 +173,10 @@
                                         content+= "color:"+area.titleColor+";";
                                     }            
                                 content+=`">`+area.name
+=======
+                                            <div class="title">`+
+                                                area.name
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                                             +`<div class="close" onclick="closeClickOverlay()" title="닫기"></div>
                                         </div>
                                         <div class="body">   
@@ -151,7 +190,11 @@
                                             </div>
                                         </div>    
                                     </div>
+<<<<<<< HEAD
                                 </div>`;//오버레이                    
+=======
+                                </div>`;//오버레이
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                     clickOverlay.setContent(content)
                     clickOverlay.setPosition(mouseEvent.latLng)
                     clickOverlay.setMap(map);
@@ -175,7 +218,11 @@
                                 </div>
                             <div class="body">   
                                     <div class="img">   
+<<<<<<< HEAD
                                         <img src="/static/images/maps/sm_logo.png" width="73" height="70">   
+=======
+                                        <img src="https://www.softmania.co.kr/images/sm_logo.png" width="73" height="70">   
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                                     </div>         
                                 <div class="desc">        
                                     <div class="ellipsis">(지번)서울 금천구 가산동 60-11</div>  
@@ -234,11 +281,19 @@
             // infowindow.open(map, marker); 
             // 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
             var mapTypeControl = new daum.maps.MapTypeControl();
+<<<<<<< HEAD
 
             // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
             // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
             map.addControl(mapTypeControl, daum.maps.ControlPosition.TOPRIGHT);
 
+=======
+
+            // 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+            // daum.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+            map.addControl(mapTypeControl, daum.maps.ControlPosition.TOPRIGHT);
+
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             // 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
             var zoomControl = new daum.maps.ZoomControl();
             map.addControl(zoomControl, daum.maps.ControlPosition.RIGHT);
@@ -262,6 +317,31 @@
                         }
                     }
                 })
+<<<<<<< HEAD
+=======
+            }
+            function locationContent(searchInfo){
+                var content = `<div class="wrap">
+                                <div class="info">
+                                    <div class="title">
+                                        사용자 지정 장소
+                                    <div class="close" onclick="closeOverlay()" title="닫기"></div>
+                                </div>
+                            <div class="body">   
+                                    <div class="img">   
+                                        <img src="http://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">   
+                                    </div>         
+                                <div class="desc">`;
+                if(searchInfo.road_address != null){
+                    content+=`<div class="ellipsis">`+searchInfo.road_address.address_name+`</div>`;
+                }                    
+                if (searchInfo.address != null){
+                    content += `<div class="jibun ellipsis">`+searchInfo.address.address_name+`</div>`;
+                }    
+                content+= `<div><a href="http://map.daum.net/link/to/사용자지정장소, `+marker.getPosition().getLat()+`,`+marker.getPosition().getLng()+`" target="_blank" class="link">길찾기</a></div>`;
+                content +=  `</div></div></div></div>`;
+                return content;
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             }
             function locationContent(searchInfo){
                 var content = `<div class="wrap">

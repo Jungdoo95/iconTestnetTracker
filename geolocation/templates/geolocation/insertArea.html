@@ -41,7 +41,11 @@
             
         </div>
         <p class="modes">            
+<<<<<<< HEAD
             <button class="btn bg-seagreen"onclick="selectOverlay('POLYGON')">영역</button>
+=======
+            <button onclick="selectOverlay('POLYGON')">영역</button>
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
         </p>
         <div class="area-path">
             
@@ -147,7 +151,14 @@
                         areaData+=`</div>`;
                     }
                     areaData+=`
+<<<<<<< HEAD
                         </div>                        
+=======
+                        </div>
+                        <div class="area-name">
+                            <input type="text" class="form-control" name="area-name" placeholder="Enter area name">                            
+                        </div>
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                         <button class="btn bg-seagreen" name="area-insert" onclick="insertArea(this);">추가</button>
                         <hr>
                     </div>
@@ -182,10 +193,17 @@
                 
                 $(area).find('button[name="area-insert"]').remove();
                 $(area).find('input[name="area-name"]').remove();
+<<<<<<< HEAD
                 var $form = $('<form ></form>');                
                 $form.attr('method', 'post');                
                 $form.appendTo('body');
                 $form.append("<input style='display:none;' type='text' name='area"+$(area).find('#areaIndex').val()+"' value='"+JSON.stringify(path)+"'>")
+=======
+                var $form = $('<form></form>');                
+                $form.attr('method', 'post');                
+                $form.appendTo('body');
+                $form.append("<input type='text' name='area"+$(area).find('#areaIndex').val()+"' value='"+JSON.stringify(path)+"'>")
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                 $form.submit();
                 $(area).find('.area-name').append('<div>완료</div>');
             }

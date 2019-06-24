@@ -47,9 +47,12 @@
         width: 30px;
         height:  30px;    
     }
+<<<<<<< HEAD
     .hidden{
         display: none;
     }
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
 </style>
 {% endblock %}
 {% block jsBlock %}    
@@ -90,11 +93,16 @@
                     <div class="col">
                         <div id="status">Drag the files from a folder to a selected area ...</div>
                         <div id="drop">Drop files here.</div>
+<<<<<<< HEAD
                         <input type="file" class="hidden" name="upload-img" id="upload-img" accept="image/*">
+=======
+                        <div id="list"></div>
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                     </div>                    
                 </div>
                 <hr>
                 <div class="row">
+<<<<<<< HEAD
                     <div class="col-3">지역 정보</div>
                     <div class="col"><input type="text" name="customOverlay-ellipsis" id="customOverlay-ellipsis"></div>
                 </div>
@@ -104,6 +112,8 @@
                 </div>
                 <hr>
                 <div class="row">
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                     <div class="col-3">홈페이지 주소</div> <div class="col"><input type="text" name="customOverlay-link" id="customOverlay-link"></div>                    
                 </div>
             </div>
@@ -175,6 +185,7 @@
                 })
                 editArea.setMap(map);
             }
+<<<<<<< HEAD
             var center = map.getCenter();
             var searchInfo
             $.ajax({
@@ -187,12 +198,15 @@
                     searchInfo = res.documents[0];
                 }
             })
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             var content = `<div class="wrap">
                                 <div class="info">
                                     <div class="title" id="preview-title">
                                         타이틀
                                     <div class="close" title="닫기"></div>
                                 </div>
+<<<<<<< HEAD
                                 <div class="body">   
                                     <div class="img">   
                                         <img id="preview-img" src="/static/images/maps/sm_logo.png" width="73" height="70">   
@@ -210,12 +224,27 @@
             }
             content+= `<div><a id="preview-link" href="#" target="_blank" class="link">홈페이지</a></div>`;
             content +=  `</div></div></div></div>`;
+=======
+                            <div class="body">   
+                                    <div class="img">   
+                                        <img id="preview-img" src="https://www.softmania.co.kr/images/sm_logo.png" width="73" height="70">   
+                                    </div>         
+                                <div class="desc">        
+                                    <div class="ellipsis">지번</div>  
+                                    <div class="jibun ellipsis">우편번호</div>    
+                                    <div><a id="preview-link" href="#" target="_blank" class="link">홈페이지</a></div>
+                                </div>
+                                </div>    
+                            </div>
+                        </div>`;
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             
             customOverlay.setContent(content);
             customOverlay.setPosition(map.getCenter());
             customOverlay.setMap(map);
 
             $('#customOverlay-title').on("propertychange change keyup paste input", function(){
+<<<<<<< HEAD
                 if($(this).val().trim().length ==0){
                     $('#preview-title').text("타이틀");
                 }else{
@@ -236,6 +265,10 @@
                     $('#preview-jibun').text($(this).val());
                 }
             })
+=======
+                $('#preview-title').text($(this).val());
+            });
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             $('#customOverlay-link').on("propertychange change keyup paste input", function(){
                 $('#preview-link').attr('href',$(this).val());
             });
@@ -275,6 +308,7 @@
             });
         </script>
         <script>
+<<<<<<< HEAD
             $('#drop').click(function(){
                 $('#upload-img').trigger('click');
             })
@@ -305,6 +339,8 @@
                     }.bindToEventHandler(file));
                 }
             })
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             if (window.FileReader) {
                 var drop;
                 addEventHandler(window, 'load', function() {
@@ -363,6 +399,10 @@
                     Function.prototype.bindToEventHandler = function bindToEventHandler() {
                     var handler = this;
                     var boundParameters = Array.prototype.slice.call(arguments);
+<<<<<<< HEAD
+=======
+                    console.log(boundParameters);
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                     //create closure
                     return function(e) {
                         e = e || window.event; // get window.event if e argument missing (in IE)   
@@ -393,21 +433,30 @@
                 let titleName;
                 let titleBGColor;
                 let titleColor;
+<<<<<<< HEAD
                 let ellipsis;
                 let jibun;
+=======
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                 let img;
                 let link;
                 titleName = $('#preview-title').text().trim();
                 titleBGColor = $('#preview-title').css('background');
                 titleColor = $('#preview-title').css('color');
+<<<<<<< HEAD
                 ellipsis = $('#preview-ellipsis').text().trim();
                 jibun = $('#preview-jibun').text().trim();
                 img = $('#preview-img').attr('src');
                 link = $('#preview-link').attr('href');
+=======
+                img = $('#preview-img').attr('src');
+                link = $('#preview-homepage').attr('href');
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
                 let preview = {
                     titleName: titleName,
                     titleBGColor :titleBGColor,
                     titleColor : titleColor,
+<<<<<<< HEAD
                     ellipsis : ellipsis,
                     jibun : jibun,
                     img : img,
@@ -431,6 +480,14 @@
                         console.log(error);
                     }
                 })
+=======
+                    img : img,
+                    link : link,
+                    path : path
+                }
+                
+                $('#previewInfo pre').text(JSON.stringify(preview, null, 4));
+>>>>>>> b9adcce0e6e1a246ccd7455f54d68b0a8efb7ee8
             }   
         </script>
 </div>
