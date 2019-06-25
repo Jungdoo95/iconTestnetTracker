@@ -48,7 +48,7 @@ def checkSession(request):
         return
     else:        
         if not request.session.keys():
-            print("key note detect!")
+            print("key not detect!")
             request.session.save()        
         print('Session exists') 
             

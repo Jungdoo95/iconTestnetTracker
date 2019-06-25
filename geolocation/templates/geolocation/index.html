@@ -83,7 +83,7 @@
             }
 
         </script>
-        {% endif %}
+        {% endif %}        
         <script>
             var container = document.getElementById('map');
             let status = '{{status}}';
@@ -99,9 +99,45 @@
             }
 
             var map = new daum.maps.Map(container, options),
-                clickOverlay = new daum.maps.CustomOverlay({});
+            clickOverlay = new daum.maps.CustomOverlay({});
+            if (navigator.geolocation) {                    
+                var userLat;
+                var userLng;
+                function geo_success(position) {
+                    userLat = position.coords.latitude;
+                    userLng = position.coords.longitude;
+                    if (map != null){                       
+                        map.setCenter(new daum.maps.LatLng(Number(userLat), Number(userLng)));                        
+                    }                        
+                }
+                function geo_error() {
+                    alert("위치 정보를 사용할 수 없습니다.");
+                }
+                var geo_options = {
+                    enableHighAccuracy: true, 
+                    maximumAge        : 0, 
+                    timeout           : 30000
+                };
+                var watch = navigator.geolocation.watchPosition(geo_success, geo_error, geo_options);
+            } else {
+                alert('해당 브라우저에서 Geolocation API를 지원하지 않습니다.');
+            }
 
-            
+            daum.maps.event.addListener(map, 'center_changed', function(event) {
+                //alert('center changed!');
+                if(map.getCenter() == new daum.maps.LatLng(Number(userLat), Number(userLng))){
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return;
+                }
+
+                try {
+                    navigator.geolocation.clearWatch(watch);
+                    //console.log("test");
+                } catch (error) {
+                    console.log(error);   
+                }
+            });
 
             function displayArea(area){
                 console.log("area init")
@@ -286,5 +322,6 @@
                 return content;
             }            
         </script>
+        
     </div>
 {% endblock %}
