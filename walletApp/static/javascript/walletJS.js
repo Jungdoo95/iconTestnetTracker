@@ -1,4 +1,56 @@
-$().ready(function () {
+$().ready(function () {    
+    var modalExist = document.getElementById('wallet-modal');
+    if (modalExist == null){
+        var walletModal = `
+        <div id="wallet-modal" class="modal" tabindex="-1" role="dialog">
+        
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-seagreen">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col left-nav">
+                                <div class="left-nav-content text-center">
+                                    <div class="step-title">Wallet Create Step 1</div>
+                                    <div class="modal-step">                                        
+                                        <span class="sign-span current">1</span>
+                                        <span class="sign-span">2</span>
+                                        <span class="sign-span">3</span>
+                                        <span class="sign-span">4</span>
+                                    </div>
+                                    <div class="modal-step-content">
+                                        <div>
+                                            Create wallet
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 right-content">
+                                <p>modal-content</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer hidden">
+                    <button type="button" class="btn btn-primary">
+                        <i class="fa fa-spinner fa-spin spinner hidden" id="wallet-modal-confirm"></i>
+                        Save changes
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        `;
+        $('body').append(walletModal);
+    }
+
     window.window.onbeforeunload = function() {
         post_fetch("/wallet/create/close","{}");
     }

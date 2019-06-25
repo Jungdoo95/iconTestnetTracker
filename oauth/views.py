@@ -17,6 +17,9 @@ def index(request):
             check = login(request)
             if check == "email":
                 return HttpResponseRedirect("/oauth/input/email/")
+            elif check == "fail":
+                del request.session['login']
+                del request.session['code']
             else:
                 del request.session['code']
     if request.GET:
@@ -33,8 +36,12 @@ def login(request):
     elif 'google' in request.session:
         loginType = 'google'
         email = request.session['google']
+    else:
+        return "fail"
     
-    print(email)
+    if 'code' not in request.session:
+        return "fail"
+
     if email == "require_userEmail":
         try:
             user = Users.objects.get(code= request.session['code'], loginType=loginType)
@@ -73,7 +80,13 @@ def inputEmail(request):
             request.session['google'] = request.POST['email']
 
         return HttpResponseRedirect('/oauth/')
-        
+
+def inputProfile(request):
+    if request.method =='GET':        
+        return render(request, 'oauth/inputProfile.html')        
+    else:
+        print(request.POST)
+        return HttpResponseRedirect('/oauth/')
 
 def logout(request):
     print("logout...")

@@ -32,12 +32,32 @@ icon_service = IconService(HTTPProvider("https://bicon.net.solidwallet.io/api/v3
 BASE_DIR = os.path.dirname(os.path.abspath(__file__));
 # Create your views here.
 
+def checkSessionDeco(func):
+    def decorator(*args, **kwargs):
+        print("Check Session")            
+        checkSession(*args, **kwargs)
+        result = func(*args, **kwargs)        
+        return result
+    return decorator
+           
+def checkSession(request):
+    if request.session._session ==None:
+        print('Session not exists')
+        print('Create Session')
+        request.session.save()
+        return
+    else:        
+        if not request.session.keys():
+            print("key note detect!")
+            request.session.save()        
+        print('Session exists') 
+            
 
 def index(request):
     # request.session['wallet_name'] = 'default';
     return render(request, 'wallet/index.html')
 
-
+@checkSessionDeco
 def createWallet(request):
     print(request.body)
     postData = json.loads(request.body)
@@ -45,6 +65,8 @@ def createWallet(request):
     wallet = KeyWallet.create()
     wallet_status = { "status" : "ok"}
     print( os.path.dirname(os.path.abspath(__file__)))
+    if request.session.session_key ==None:
+        request.session.save()
     os.mkdir(BASE_DIR+"/keystore/"+request.session.session_key+'/')
     wallet.store( BASE_DIR+"/keystore/"+request.session.session_key+'/'+data['wallet_name'],data['wallet_password'])
     request.session['wallet_name'] = data['wallet_name']
@@ -53,6 +75,7 @@ def createWallet(request):
     # wallet.store(file_path,"keystore")
     return JsonResponse(wallet_status);
 
+@checkSessionDeco
 def keystoreDownload(request): 
     file_path= BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['wallet_name']
     if os.path.exists(file_path):
@@ -62,6 +85,7 @@ def keystoreDownload(request):
             return response
     raise Http404
 
+@checkSessionDeco
 def walletPrivateKey(request):
     try:
         file_path= BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['wallet_name']
@@ -72,6 +96,7 @@ def walletPrivateKey(request):
     except Exception:
         return JsonResponse({"ERROR": 404})
 
+@checkSessionDeco
 def walletCreateClose(request):
     result = {"status": "ok"}
     try:
@@ -89,7 +114,7 @@ def walletCreateClose(request):
             result['status']="fail"
     return JsonResponse(result)
     
-
+@checkSessionDeco
 def searchWallet(request):    
     # print(request.body);
     if os.path.exists (BASE_DIR+"/keystore/"+request.session.session_key+'/'+request.session['keystore']):
@@ -120,13 +145,14 @@ def searchWallet(request):
     except Exception:
         return JsonResponse({"status":"fail"})
 
-
+@checkSessionDeco
 def uploadKeystore(request):
     if request.method == 'POST':        
         if 'keystore' in request.FILES:
             
             keystore = request.FILES['keystore']
             keystore_name = keystore._name
+            
             print(os.path.exists(BASE_DIR+"/keystore/"+request.session.session_key+'/'))
             if not os.path.exists (BASE_DIR+"/keystore/"+request.session.session_key+'/'):
                 print("folder create!!!")
