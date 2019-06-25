@@ -18,8 +18,11 @@ def index(request):
             if check == "email":
                 return HttpResponseRedirect("/oauth/input/email/")
             elif check == "fail":
-                del request.session['login']
-                del request.session['code']
+                try:
+                    del request.session['login']
+                    del request.session['code']
+                except:
+                    return render(request, 'oauth/index.html')                
             else:
                 del request.session['code']
     if request.GET:
