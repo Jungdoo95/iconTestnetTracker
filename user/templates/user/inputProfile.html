@@ -1,0 +1,45 @@
+{% extends 'tracker/base.html' %}
+{% block cssBlock %}
+<link href="/static/css/walletCSS.css" rel="stylesheet">
+{% endblock %}
+{% block jsBlock %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+<script src="/static/javascript/walletJS.js" type="text/javascript"></script>
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        <form action="{% url 'oauth:inputProfile' %}" method="POST">
+            {% csrf_token %} 
+            <div class="row">
+                <div class="col-3">
+                    이름
+                </div>
+                <div class="col-6">
+                    <input class="form-control" type="text" name="userName" id="userName" placeholder="Enter user name">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    휴대폰 번호
+                </div>
+                <div class="col-6">
+                    <input class="form-control" type="text" name="userPhone" id="userPhone" placeholder="Enter phone number">
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <button id="createWallet-btn"class="btn bg-seagreen" onclick="return false;">지갑 생성</button>
+            </div>
+            <div class="row">      
+                <div class="col-3">
+                    지갑 주소
+                </div>
+                <div class="col-6">
+                    <input class="form-control" type="text" name="userWalletAddress" id="userWalletAddress" placeholder="userWalletAddress">
+                </div>
+            </div>
+
+            <button class="btn bg-seagreen" type="submit">제출</button>
+        </form>
+    </div>
+{% endblock %}

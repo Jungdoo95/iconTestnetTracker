@@ -1,0 +1,59 @@
+{% extends 'tracker/base.html' %}
+{% block jsBlock %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script>
+        $().ready(function(){
+            $('.kakao-login-btn').click(function(){
+                console.log('kakao login redirect!');
+                document.location.href="/user/login/kakao/";
+            })
+            $('.facebook-login-btn').click(function(){
+                console.log('facebook login redirect!');
+                document.location.href="/user/login/facebook/";
+            })
+            $('.google-login-btn').click(function(){
+                console.log('google login redirect!');
+                document.location.href="/user/login/google/";
+            })
+            $('.logout-btn').click(function(){
+                document.location.href="/user/logout/";
+            })
+        })        
+    </script>
+{% endblock %}
+{% block contentBlock %}
+    {% if msg %}
+        <script>
+            msg = '{{msg}}'
+            msg = msg.replace("[","").replace("]","").replace("'","")
+            Swal.fire('Login Fail!',msg, 'error' );
+        </script>
+    {% endif %}
+        
+    <div class="content-wrap">
+        {% if 'login' not in request.session %}
+            <div>login test page</div>
+                <div class="oauth-login">
+                    <button class="kakao-login-btn"><img class="kakao-login" src="/static/images/login/kakao-login.png"></button>
+                </div> 
+                <div class="oauth-login">
+                    <button class="facebook-login-btn"><img class="facebook-login" src="/static/images/login/facebook-login.png"></button>
+                </div>
+                <div class="oauth-login">
+                    <button class="google-login-btn"><img class="google-login" src="/static/images/login/google-login.png"></button>
+                </div>
+        {% else %}
+            <div class="login-info">
+            {% if request.session.kakao %}
+                <div>{{request.session.kakao}}</div>
+            {% elif request.session.facebook %}
+                <div>{{request.session.facebook}}</div>
+            {% elif request.session.google %}
+                <div>{{request.session.google}}</div>
+            {% endif %} 
+                <button class="btn bg-seagreen logout-btn">Logout</button>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
