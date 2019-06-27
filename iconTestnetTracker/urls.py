@@ -22,4 +22,5 @@ urlpatterns = [
     path('wallet/', include('walletApp.urls')),
     path('oauth/', include('oauth.urls')),
     path('geolocation/', include('geolocation.urls')),
+    path('user/', include('user.urls')),    
 ]
