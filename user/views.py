@@ -3,10 +3,13 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 
+
 from .models import User
+from .forms import *
 from django.utils import timezone
 
 import requests, json
+import re
 import uuid
 
 def createRedirectURL(url, params):
@@ -55,7 +58,9 @@ def login(request):
                     del request.session['login']
                     del request.session['loginToken']
                 except:
-                    return render(request, 'user/login.html')                
+                    return render(request, 'user/login.html')     
+            elif check =="profile":
+                return HttpResponseRedirect("/user/require/profile/")           
             else:
                 return render(request, 'user/login.html')   
     if request.GET:
@@ -81,8 +86,11 @@ def loginCheck(request):
         except:
             user = User(email=email)
             user.save()
-        print(user)
-        print(type(user))
+        if not user.name or not user.phoneNumber:
+            print("require Profile!")    
+        if not user.walletAddress:
+            print("require walletAddress!")
+            return "profile"
 
     
 
@@ -108,9 +116,18 @@ def inputEmail(request):
 
 def inputProfile(request):
     if request.method =='GET':        
-        return render(request, 'user/require/profile.html')        
+        
+        return render(request, 'user/modify/profile.html')        
     else:
         print(request.POST)
+        form = UserProfileForm(request.POST)
+        if  form.is_valid():
+            print("test msg")
+            user = User.objects.get(email = request.session['email'])
+            user.name = request.POST['name']
+            user.phoneNumber = request.POST['phoneNumber']
+            user.walletAddress = request.POST['walletAddress']
+            user.save()
         return HttpResponseRedirect('/user/login/')
 
 def logout(request):
@@ -179,7 +196,7 @@ def kakaoLoginResponse(request):
                 request.session['email'] = email
                 request.session['loginToken']="kakao."+token['access_token']
             request.session['login'] = True
-            return HttpResponseRedirect('/user/')
+            return HttpResponseRedirect('/user/login')
         else:
             return HttpResponseRedirect('/user/login/?msg='+'kakao login fail'+'&status=fail')
     except:

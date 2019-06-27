@@ -8,14 +8,14 @@
 {% endblock %}
 {% block contentBlock %}
     <div class="content-wrap">
-        <form action="{% url 'oauth:inputProfile' %}" method="POST">
+        <form action="{% url 'user:inputProfile' %}" method="POST">
             {% csrf_token %} 
             <div class="row">
                 <div class="col-3">
                     이름
                 </div>
                 <div class="col-6">
-                    <input class="form-control" type="text" name="userName" id="userName" placeholder="Enter user name">
+                    <input class="form-control" type="text" name="name" id="userName" placeholder="Enter user name">
                 </div>
             </div>
             <div class="row">
@@ -23,7 +23,7 @@
                     휴대폰 번호
                 </div>
                 <div class="col-6">
-                    <input class="form-control" type="text" name="userPhone" id="userPhone" placeholder="Enter phone number">
+                    <input class="form-control" type="text" name="phoneNumber" id="userPhone" placeholder="Enter phone number">
                 </div>
             </div>
             <hr>
@@ -35,10 +35,11 @@
                     지갑 주소
                 </div>
                 <div class="col-6">
-                    <input class="form-control" type="text" name="userWalletAddress" id="userWalletAddress" placeholder="userWalletAddress">
+                    <input class="form-control" type="text" name="walletAddress" id="userWalletAddress" placeholder="userWalletAddress">
                 </div>
             </div>
-
+            <hr>
+            
             <button class="btn bg-seagreen" type="submit">제출</button>
         </form>
     </div>
