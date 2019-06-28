@@ -1,0 +1,74 @@
+{% extends 'tracker/base.html' %}
+{% block jsBlock %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script>
+        function dynamicForm(data){
+            var $form = $("#dynamicForm");
+            if($form.length < 1) {
+            $form = $("<form/>").attr({id:"dynamicForm", method:'POST'});
+            $(document.body).append($form);
+            }
+            $form.empty();
+            $("<input></input>").attr({type:"hidden", name:data.name, value:data.value}).appendTo($form);
+            $('input[name="csrfmiddlewaretoken"]').appendTo($form);
+            $form.submit();
+            $form.empty();
+        }
+        $().ready(function(){
+            $('#nickNameSubmit').on('click', function(){
+                data ={ name : $('#nickName').attr('name'),value:$('#nickName').val()}
+                dynamicForm(data);
+            })
+        })
+    </script>
+{% endblock %}
+{% block contentBlock %}
+    <div class="content-wrap">
+        testpage
+        {% csrf_token %}
+        <div class="row">
+            <div class="avata-img">
+                이미지     
+            </div>
+            <button class="btn bg-seagreen">아바타 바꾸기</button>            
+        </div>
+        <div class="row">
+            <input placeholder="닉네임" id="nickName" name="nickName" value="{{nickName}}"><button id="nickNameSubmit" class="btn bg-seagreen">변경</button>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">이름</div>
+            <div class="col-6">{{name}}</div>
+        </div>
+        <div class="row">
+            <div class="col-3">이메일</div>
+            <div class="col-6">{{email}}</div>
+        </div>
+        <hr>
+        <div class="row">
+            <div>휴대폰 <span>주문정보의 연락처로 사용됩니다</span></div>            
+        </div>
+        <div class="row">
+            <div>
+                <input type="text" value='{{phoneNumber|slice:":3"}}'><input type="text" value='{{phoneNumber|slice:"3:7"}}'><input type="text" value='{{phoneNumber|slice:"7:11"}}'> <button id="phoneNumberSubmit" class="btn bg-seagreen">인증하기</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div>비밀번호 변경</div>
+        </div>
+        <div class="row">
+            <div>
+                <input type="passowrd"><button id="passwordSubmit" class="btn bg-seagreen">변경</button>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div>메일 수신 동의</div>
+        </div>
+        <div class="row">
+            <div>SMS 수신 동의</div>
+        </div>
+    </div>
+{% endblock %}
+

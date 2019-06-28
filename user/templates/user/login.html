@@ -18,6 +18,9 @@
             $('.logout-btn').click(function(){
                 document.location.href="/user/logout/";
             })
+            $('.mypage-btn').click(function(){
+                document.location.href="/user/mypage/";
+            })
         })        
     </script>
 {% endblock %}
@@ -46,6 +49,7 @@
             <div class="login-info">
                 <div>{{request.session.email}}</div>
                 <button class="btn bg-seagreen logout-btn">Logout</button>
+                <button class="btn bg-seagreen mypage-btn">MyPage</button>
             </div>
         {% endif %}
     </div>

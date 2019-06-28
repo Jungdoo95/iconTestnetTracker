@@ -36,12 +36,15 @@ INSTALLED_APPS = [
     'oauth.apps.OauthConfig',
     'geolocation.apps.GeolocationConfig',
     'user.apps.UserConfig',
+    'store.apps.StoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # smart select library
+    'smart_selects',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +138,9 @@ USE_TZ = False
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+
+
+# Media files
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
